@@ -1,0 +1,38 @@
+{
+    "geode": "4.3.1",
+    "gd": {
+        "win": "2.2074",
+        "android": "2.2074",
+        "mac": "2.2074",
+        "ios": "2.2074"
+    },
+    "id": "ninkaz.editor_sfx",
+    "name": "NinKaz's Editor SFX",
+    "version": "v1.0.0",
+    "developer": "NinKaz",
+    "description": "Alleviate the editor's deafening silence",
+    "tags": ["editor", "enhancement", "offline"],
+    "resources": {
+        "files": ["sfx/*.wav"]
+    },
+    "incompatibilities": {
+        "alphalaneous.editorsounds": {
+            "importance": "conflicting",
+            "version": "*"
+        }
+    },
+    "settings": {
+        "volume": {
+            "type": "int",
+            "name": "Volume",
+            "default": 100,
+            "min": 0,
+            "max": 100,
+            "control": {
+                "arrows": false,
+                "slider": true,
+                "input": true
+            }
+        }
+    }
+}
