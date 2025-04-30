@@ -31,11 +31,12 @@ namespace sfx {
 
     void playQueuedSounds();
     static void playSound(EditorSFX sound);
+    static float getSpeed(EditorSFX sound);
 
     void updateCooldowns(float dt);
     static void resetCooldown(EditorSFX sound);
 
-    static std::filesystem::path getSoundPath(EditorSFX sound);
-
+    std::filesystem::path getSoundPath(EditorSFX sound);
     void altTabFix();
+    float generateRandomFloat(float min, float max);
 }

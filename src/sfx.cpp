@@ -2,6 +2,7 @@
 #include <Geode/modify/EditorUI.hpp>
 
 #include <Geode/Geode.hpp>
+#include <random>
 using namespace geode::prelude;
 
 std::unordered_set<EditorSFX> queuedSounds;
@@ -56,7 +57,25 @@ static void sfx::playSound(EditorSFX sound) {
     altTabFix();
 
     float volume = Mod::get()->getSettingValue<int64_t>("volume") / 100.f;
-    FMODAudioEngine::get()->playEffect(path.string(), 1, 0, volume);
+    float speed = getSpeed(sound);
+
+    FMODAudioEngine::get()->playEffect(path.string(), speed, 0, volume);
+}
+
+float sfx::getSpeed(EditorSFX sound) {
+    switch (sound) {
+        case EditorSFX::Place:
+        case EditorSFX::Delete:
+        case EditorSFX::Move:
+        case EditorSFX::Transform:
+        case EditorSFX::ZoomIn:
+        case EditorSFX::ZoomOut:
+            return generateRandomFloat(0.97f, 1.03f);
+        case EditorSFX::SliderTick:
+            return generateRandomFloat(0.94f, 1.06f);
+        default:
+            return 1.f;
+    }
 }
 
 void sfx::updateCooldowns(float dt) {
@@ -78,7 +97,7 @@ static void sfx::resetCooldown(EditorSFX sound) {
     }
 }
 
-static std::filesystem::path sfx::getSoundPath(EditorSFX sound) {
+std::filesystem::path sfx::getSoundPath(EditorSFX sound) {
     switch (sound) {
         case EditorSFX::Copy: return "copy.wav"_spr;
         case EditorSFX::Delete: return "delete.wav"_spr;
@@ -108,4 +127,12 @@ static std::filesystem::path sfx::getSoundPath(EditorSFX sound) {
 
 void sfx::altTabFix() {
     FMODAudioEngine::get()->m_globalChannel->setPaused(false);
+}
+
+float sfx::generateRandomFloat(float min, float max) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> dis(min, max);
+
+    return dis(gen);
 }
