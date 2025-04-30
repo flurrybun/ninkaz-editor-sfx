@@ -285,13 +285,13 @@ class $modify(SFXEditorUI, EditorUI) {
 
     $override
     void sliderChanged(CCObject* sender) {
+        float prevXPos = m_editorLayer->m_objectLayer->getPositionX();
+
         EditorUI::sliderChanged(sender);
 
-        SliderThumb* thumb = typeinfo_cast<SliderThumb*>(sender);
-        if (!thumb) return;
-        if (thumb->getValue() <= 0.f || thumb->getValue() >= 1.f) return;
-
-        sfx::queue(EditorSFX::SliderTick);
+        if (prevXPos != m_editorLayer->m_objectLayer->getPositionX()) {
+            sfx::queue(EditorSFX::SliderTick);
+        }
     }
 
     $override
