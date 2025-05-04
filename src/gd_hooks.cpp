@@ -2,6 +2,8 @@
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <Geode/modify/EditButtonBar.hpp>
+#include <Geode/modify/GJScaleControl.hpp>
+#include <Geode/modify/GJTransformControl.hpp>
 #include <Geode/modify/CCLayerColor.hpp>
 #include <Geode/modify/FMODAudioEngine.hpp>
 #include <Geode/modify/EditorPauseLayer.hpp>
@@ -406,6 +408,32 @@ class $modify(SFXEditButtonBar, EditButtonBar) {
     void onRight(CCObject* sender) {
         EditButtonBar::onRight(sender);
         sfx::queue(EditorSFX::SwitchTab);
+    }
+};
+
+class $modify(SFXGJScaleControl, GJScaleControl) {
+    $override
+    void onToggleLockScale(CCObject* sender) {
+        GJScaleControl::onToggleLockScale(sender);
+
+        if (m_scaleLocked) {
+            sfx::queue(EditorSFX::Link);
+        } else {
+            sfx::queue(EditorSFX::Unlink);
+        }
+    }
+};
+
+class $modify(SFXGJTransformControl, GJTransformControl) {
+    $override
+    void onToggleLockScale(CCObject* sender) {
+        GJTransformControl::onToggleLockScale(sender);
+
+        if (m_warpLocked) {
+            sfx::queue(EditorSFX::Link);
+        } else {
+            sfx::queue(EditorSFX::Unlink);
+        }
     }
 };
 
