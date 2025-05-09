@@ -221,6 +221,16 @@ class $modify(SFXEditorUI, EditorUI) {
     }
 
     $override
+    void onUpdateDeleteFilter(CCObject* sender) {
+        int prevDeleteFilter = GameManager::get()->getIntGameVariable("0005");
+        EditorUI::onUpdateDeleteFilter(sender);
+
+        if (prevDeleteFilter != GameManager::get()->getIntGameVariable("0005")) {
+            sfx::queue(EditorSFX::ToggleButton);
+        }
+    }
+
+    $override
     void moveObjectCall(EditCommand p0) {
         EditorUI::moveObjectCall(p0);
         sfx::queue(EditorSFX::Move);
@@ -362,6 +372,16 @@ class $modify(SFXLevelEditorLayer, LevelEditorLayer) {
     //     sfx::queue(EditorSFX::Delete);
     //     LevelEditorLayer::removeObject(p0, p1);
     // }
+
+    $override
+    void removeAllObjectsOfType(int objectID) {
+        int prevObjectCount = m_objects->count();
+        LevelEditorLayer::removeAllObjectsOfType(objectID);
+
+        if (prevObjectCount > m_objects->count()) {
+            sfx::queue(EditorSFX::Delete);
+        }
+    }
 
     $override
     void handleAction(bool isUndo, CCArray* undoObjects) {
