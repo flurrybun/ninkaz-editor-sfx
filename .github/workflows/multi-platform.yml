@@ -37,7 +37,8 @@ jobs:
         with:
           combine: true
           target: ${{ matrix.config.target }}
-          bindings: flurrybun/geode-bindings@main
+          bindings: flurrybun/geode-bindings
+          bindings-ref: main
 
   package:
     name: Package builds
