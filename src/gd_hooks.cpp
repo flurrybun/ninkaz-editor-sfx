@@ -100,20 +100,20 @@ class $modify(SFXEditorUI, EditorUI) {
 
     $override
     void onDelete(CCObject* sender) {
-        int prevObjectCount = m_editorLayer->m_objectCount.value();
+        int prevObjectCount = m_editorLayer->m_objects->count();
         EditorUI::onDelete(sender);
 
-        if (prevObjectCount > m_editorLayer->m_objectCount.value()) {
+        if (prevObjectCount > m_editorLayer->m_objects->count()) {
             sfx::queue(EditorSFX::Delete);
         }
     }
 
     $override
     void onDeleteSelected(CCObject* sender) {
-        int prevObjectCount = m_editorLayer->m_objectCount.value();
+        int prevObjectCount = m_editorLayer->m_objects->count();
         EditorUI::onDeleteSelected(sender);
 
-        if (prevObjectCount > m_editorLayer->m_objectCount.value()) {
+        if (prevObjectCount > m_editorLayer->m_objects->count()) {
             sfx::queue(EditorSFX::Delete);
         }
     }
