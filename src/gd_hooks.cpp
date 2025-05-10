@@ -76,16 +76,12 @@ class $modify(SFXEditorUI, EditorUI) {
 
     $override
     void selectObjects(CCArray* objects, bool p1) {
-        CCArrayExt<GameObject*> selectedObjects = m_selectedObjects;
-
-        for (auto object : CCArrayExt<GameObject*>(objects)) {
-            if (std::find(selectedObjects.begin(), selectedObjects.end(), object) == selectedObjects.end()) {
-                sfx::queue(EditorSFX::Select);
-                break;
-            }
-        }
-
+        unsigned int prevSelectedObjectCount = m_selectedObjects->count();
         EditorUI::selectObjects(objects, p1);
+
+        if (prevSelectedObjectCount < m_selectedObjects->count()) {
+            sfx::queue(EditorSFX::Select);
+        }
     }
 
     $override
