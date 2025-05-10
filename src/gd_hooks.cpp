@@ -282,7 +282,11 @@ class $modify(SFXEditorUI, EditorUI) {
 
     $override
     void updateZoom(float zoom) {
+        float prevZoom = m_editorLayer->m_objectLayer->getScale();
         EditorUI::updateZoom(zoom);
+
+        float newZoom = m_editorLayer->m_objectLayer->getScale();
+        if (std::abs(prevZoom - newZoom) < 0.01f) return;
 
         if (m_editorZoom < zoom) {
             sfx::queue(EditorSFX::ZoomIn);
