@@ -21,10 +21,13 @@ class $modify(SFXEditorUI, EditorUI) {
 
     static void onModify(auto& self) {
         if (!self.setHookPriorityBeforePre("EditorUI::angleChanged", "hjfod.betteredit")) {
-            geode::log::warn("Failed to set hook priority for EditorUI::angleChanged");
+            log::warn("Failed to set hook priority for EditorUI::angleChanged");
+        }
+        if (!self.setHookPriorityBeforePre("EditorUI::scrollWheel", "hjfod.betteredit")) {
+            log::warn("Failed to set hook priority for EditorUI::scrollWheel");
         }
         if (!self.setHookPriorityAfterPost("EditorUI::onPasteState", "ninkaz.editor_utils")) {
-            geode::log::warn("Failed to set hook priority for EditorUI::onPasteState");
+            log::warn("Failed to set hook priority for EditorUI::onPasteState");
         }
     }
 
@@ -292,6 +295,19 @@ class $modify(SFXEditorUI, EditorUI) {
             sfx::queue(EditorSFX::ZoomIn);
         } else if (m_editorZoom > zoom) {
             sfx::queue(EditorSFX::ZoomOut);
+        }
+    }
+
+    $override
+    void scrollWheel(float p0, float p1) {
+        CCPoint prevPosition = m_editorLayer->m_objectLayer->getPosition();
+        EditorUI::scrollWheel(p0, p1);
+
+        if (CCKeyboardDispatcher::get()->getControlKeyPressed()) return;
+        CCPoint newPosition = m_editorLayer->m_objectLayer->getPosition();
+
+        if (std::abs(prevPosition.x - newPosition.x) > 0.01f || std::abs(prevPosition.y - newPosition.y) > 0.01f) {
+            sfx::queue(EditorSFX::SliderTick);
         }
     }
 
