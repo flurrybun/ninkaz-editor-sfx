@@ -550,6 +550,12 @@ class $modify(SFXEditorPauseLayer, EditorPauseLayer) {
         EditorPauseLayer::playStep2();
         sfxFMOD->m_fields->shouldUnloadAllEffects = true;
     }
+
+    $override
+    void saveLevel() {
+        EditorPauseLayer::saveLevel();
+        sfx::clearQueue();
+    }
 };
 
 class $modify(SFXPauseLayer, PauseLayer) {
