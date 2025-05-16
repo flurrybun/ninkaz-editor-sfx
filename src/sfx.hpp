@@ -8,7 +8,7 @@ enum class EditorSFX {
     Delete,
     Deselect,
     Duplicate,
-    Link,
+    Lock,
     Move,
     Transform,
     Paste,
@@ -23,7 +23,7 @@ enum class EditorSFX {
     SwitchLayer,
     ToggleButton,
     Undo,
-    Unlink,
+    Unlock,
     ZoomIn,
     ZoomOut
 };

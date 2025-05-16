@@ -244,7 +244,7 @@ class $modify(SFXEditorUI, EditorUI) {
     $override
     void onGroupSticky(CCObject* sender) {
         if (!isEditorButtonDisabled(sender)) {
-            sfx::queue(EditorSFX::Link);
+            sfx::queue(EditorSFX::Lock);
         }
 
         EditorUI::onGroupSticky(sender);
@@ -253,7 +253,7 @@ class $modify(SFXEditorUI, EditorUI) {
     $override
     void onUngroupSticky(CCObject* sender) {
         if (!isEditorButtonDisabled(sender)) {
-            sfx::queue(EditorSFX::Unlink);
+            sfx::queue(EditorSFX::Unlock);
         }
 
         EditorUI::onUngroupSticky(sender);
@@ -277,9 +277,9 @@ class $modify(SFXEditorUI, EditorUI) {
         gd::vector<bool>& lockedLayers = m_editorLayer->m_lockedLayers;
 
         if (lockedLayers[currentLayer]) {
-            sfx::queue(EditorSFX::Link);
+            sfx::queue(EditorSFX::Lock);
         } else {
-            sfx::queue(EditorSFX::Unlink);
+            sfx::queue(EditorSFX::Unlock);
         }
     }
 
@@ -453,9 +453,9 @@ class $modify(SFXGJScaleControl, GJScaleControl) {
         GJScaleControl::onToggleLockScale(sender);
 
         if (m_scaleLocked) {
-            sfx::queue(EditorSFX::Link);
+            sfx::queue(EditorSFX::Lock);
         } else {
-            sfx::queue(EditorSFX::Unlink);
+            sfx::queue(EditorSFX::Unlock);
         }
     }
 };
@@ -466,9 +466,9 @@ class $modify(SFXGJTransformControl, GJTransformControl) {
         GJTransformControl::onToggleLockScale(sender);
 
         if (m_warpLocked) {
-            sfx::queue(EditorSFX::Link);
+            sfx::queue(EditorSFX::Lock);
         } else {
-            sfx::queue(EditorSFX::Unlink);
+            sfx::queue(EditorSFX::Unlock);
         }
     }
 };

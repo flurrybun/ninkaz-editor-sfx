@@ -116,7 +116,7 @@ std::string sfx::getSoundName(EditorSFX sound) {
         case EditorSFX::Delete: return "delete";
         case EditorSFX::Deselect: return "deselect";
         case EditorSFX::Duplicate: return "duplicate";
-        case EditorSFX::Link: return "link";
+        case EditorSFX::Lock: return "lock";
         case EditorSFX::Move: return "move";
         case EditorSFX::Transform: return "transform";
         case EditorSFX::Paste: return "paste";
@@ -131,7 +131,7 @@ std::string sfx::getSoundName(EditorSFX sound) {
         case EditorSFX::SwitchLayer: return "switch-layer";
         case EditorSFX::ToggleButton: return "toggle-button";
         case EditorSFX::Undo: return "undo";
-        case EditorSFX::Unlink: return "unlink";
+        case EditorSFX::Unlock: return "unlock";
         case EditorSFX::ZoomIn: return "zoom-in";
         case EditorSFX::ZoomOut: return "zoom-out";
         default:

@@ -18,15 +18,15 @@ void registerModHooks() {
         );
         setToggleSFX(
             self->m_scaleControl->querySelector("hjfod.betteredit/snap-lock"),
-            EditorSFX::Link, EditorSFX::Unlink
+            EditorSFX::Lock, EditorSFX::Unlock
         );
         setToggleSFX(
             self->m_rotationControl->querySelector("hjfod.betteredit/snap-lock"),
-            EditorSFX::Link, EditorSFX::Unlink
+            EditorSFX::Lock, EditorSFX::Unlock
         );
         setToggleSFX(
             self->m_rotationControl->querySelector("hjfod.betteredit/pos-lock"),
-            EditorSFX::Link, EditorSFX::Unlink
+            EditorSFX::Lock, EditorSFX::Unlock
         );
         setSFX(
             self->m_scaleControl->querySelector("hjfod.betteredit/snap-lock-size"),
