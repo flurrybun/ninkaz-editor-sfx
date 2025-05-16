@@ -1,9 +1,23 @@
 #include "sfx.hpp"
-#include <Geode/modify/EditorUI.hpp>
+#include <Geode/modify/MenuLayer.hpp>
 
 #include <Geode/Geode.hpp>
 #include <random>
 using namespace geode::prelude;
+
+class $modify(MenuLayer) {
+    $override
+    bool init() {
+        if (!MenuLayer::init()) return false;
+
+        auto res = sfx::moveDefaultSoundPack();
+        if (res.isErr()) {
+            log::error("Failed to move default sound pack: {}", res.unwrapErr());
+        }
+
+        return true;
+    }
+};
 
 std::unordered_set<EditorSFX> queuedSounds;
 
@@ -45,9 +59,8 @@ static void sfx::playSound(EditorSFX sound) {
         return;
     }
 
-    auto path = getSoundPath(sound);
-    if (path.empty()) {
-        log::error("Sound not found: {}", path.string());
+    GEODE_UNWRAP_OR_ELSE(path, err, getSoundPath(sound)) {
+        log::error("{}", err);
         return;
     }
 
@@ -97,32 +110,87 @@ static void sfx::resetCooldown(EditorSFX sound) {
     }
 }
 
-std::filesystem::path sfx::getSoundPath(EditorSFX sound) {
+std::string sfx::getSoundName(EditorSFX sound) {
     switch (sound) {
-        case EditorSFX::Copy: return "copy.wav"_spr;
-        case EditorSFX::Delete: return "delete.wav"_spr;
-        case EditorSFX::Deselect: return "deselect.wav"_spr;
-        case EditorSFX::Duplicate: return "duplicate.wav"_spr;
-        case EditorSFX::Link: return "link.wav"_spr;
-        case EditorSFX::Move: return "move.wav"_spr;
-        case EditorSFX::Transform: return "transform.wav"_spr;
-        case EditorSFX::Paste: return "paste.wav"_spr;
-        case EditorSFX::Place: return "place.wav"_spr;
-        case EditorSFX::Popup: return "popup.wav"_spr;
-        case EditorSFX::Redo: return "redo.wav"_spr;
-        case EditorSFX::Select: return "select.wav"_spr;
-        case EditorSFX::SliderTick: return "slider-tick.wav"_spr;
-        case EditorSFX::SwitchMode: return "switch-mode.wav"_spr;
-        case EditorSFX::SwitchTab: return "switch-tab.wav"_spr;
-        case EditorSFX::SwitchObject: return "switch-object.wav"_spr;
-        case EditorSFX::SwitchLayer: return "switch-layer.wav"_spr;
-        case EditorSFX::ToggleButton: return "toggle-button.wav"_spr;
-        case EditorSFX::Undo: return "undo.wav"_spr;
-        case EditorSFX::Unlink: return "unlink.wav"_spr;
-        case EditorSFX::ZoomIn: return "zoom-in.wav"_spr;
-        case EditorSFX::ZoomOut: return "zoom-out.wav"_spr;
-        default: return std::filesystem::path();
+        case EditorSFX::Copy: return "copy";
+        case EditorSFX::Delete: return "delete";
+        case EditorSFX::Deselect: return "deselect";
+        case EditorSFX::Duplicate: return "duplicate";
+        case EditorSFX::Link: return "link";
+        case EditorSFX::Move: return "move";
+        case EditorSFX::Transform: return "transform";
+        case EditorSFX::Paste: return "paste";
+        case EditorSFX::Place: return "place";
+        case EditorSFX::Popup: return "popup";
+        case EditorSFX::Redo: return "redo";
+        case EditorSFX::Select: return "select";
+        case EditorSFX::SliderTick: return "slider-tick";
+        case EditorSFX::SwitchMode: return "switch-mode";
+        case EditorSFX::SwitchTab: return "switch-tab";
+        case EditorSFX::SwitchObject: return "switch-object";
+        case EditorSFX::SwitchLayer: return "switch-layer";
+        case EditorSFX::ToggleButton: return "toggle-button";
+        case EditorSFX::Undo: return "undo";
+        case EditorSFX::Unlink: return "unlink";
+        case EditorSFX::ZoomIn: return "zoom-in";
+        case EditorSFX::ZoomOut: return "zoom-out";
+        default:
+            log::error("Missing sound name: {}", static_cast<int>(sound));
+            return "missing";
     }
+}
+
+Result<std::filesystem::path> sfx::getSoundPath(EditorSFX sound) {
+    GEODE_UNWRAP_INTO(std::filesystem::path soundPackDir, getSoundPackDir());
+
+    std::string soundName = getSoundName(sound);
+    std::vector<std::string> extensions = {".wav", ".mp3", ".ogg", ".flac"};
+
+    for (const auto& ext : extensions) {
+        std::filesystem::path soundPath = soundPackDir / (soundName + ext);
+
+        if (std::filesystem::exists(soundPath)) {
+            return Ok(soundPath);
+        }
+    }
+
+    // fallback to default sfx
+
+    std::filesystem::path defaultSoundPath = Mod::get()->getConfigDir() / "NinKaz's SFX v1" / (soundName + ".wav");
+
+    if (std::filesystem::exists(defaultSoundPath)) {
+        return Ok(defaultSoundPath);
+    }
+
+    return Err("Unable to find file for sound '{}'", soundName);
+}
+
+std::string sfx::getSoundPackName() {
+    return Mod::get()->getSettingValue<std::string>("sound-pack");
+}
+
+Result<std::filesystem::path> sfx::getSoundPackDir() {
+    std::filesystem::path soundPackDir = Mod::get()->getConfigDir() / getSoundPackName();
+
+    if (std::filesystem::exists(soundPackDir)) {
+        return Ok(soundPackDir);
+    }
+
+    return Err("Sound pack directory '{}' does not exist", soundPackDir.string());
+}
+
+Result<> sfx::moveDefaultSoundPack() {
+    auto prevDir = Mod::get()->getResourcesDir();
+    auto newDir = Mod::get()->getConfigDir() / "NinKaz's SFX v1";
+
+    if (!std::filesystem::exists(prevDir)) return Err("Unable to find resources directory: {}", prevDir);
+    if (std::filesystem::exists(newDir)) return Err("Target directory already exists: {}", newDir);
+
+    std::error_code ec;
+    std::filesystem::rename(prevDir, newDir, ec);
+
+    if (ec) return Err("Failed to move directory: {}", ec.message());
+    return Ok();
 }
 
 void sfx::altTabFix() {

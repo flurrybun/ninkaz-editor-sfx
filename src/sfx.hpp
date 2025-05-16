@@ -1,6 +1,7 @@
 #pragma once
 
 #include <filesystem>
+#include <Geode/Result.hpp>
 
 enum class EditorSFX {
     Copy,
@@ -38,7 +39,12 @@ namespace sfx {
     void updateCooldowns(float dt);
     static void resetCooldown(EditorSFX sound);
 
-    std::filesystem::path getSoundPath(EditorSFX sound);
+    std::string getSoundName(EditorSFX sound);
+    geode::Result<std::filesystem::path> getSoundPath(EditorSFX sound);
+    std::string getSoundPackName();
+    geode::Result<std::filesystem::path> getSoundPackDir();
+    geode::Result<> moveDefaultSoundPack();
+
     void altTabFix();
     float generateRandomFloat(float min, float max);
 }

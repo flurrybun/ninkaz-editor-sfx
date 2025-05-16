@@ -33,6 +33,11 @@
                 "slider": true,
                 "input": true
             }
+        },
+        "sound-pack": {
+            "type": "string",
+            "name": "Sound Pack Name",
+            "default": "NinKaz's SFX v1"
         }
     }
 }
