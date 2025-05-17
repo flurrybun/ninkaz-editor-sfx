@@ -116,6 +116,7 @@ std::string sfx::getSoundName(EditorSFX sound) {
         case EditorSFX::Delete: return "delete";
         case EditorSFX::Deselect: return "deselect";
         case EditorSFX::Duplicate: return "duplicate";
+        case EditorSFX::EnterEditor: return "enter-editor";
         case EditorSFX::Lock: return "lock";
         case EditorSFX::Move: return "move";
         case EditorSFX::Transform: return "transform";

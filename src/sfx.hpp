@@ -8,6 +8,7 @@ enum class EditorSFX {
     Delete,
     Deselect,
     Duplicate,
+    EnterEditor,
     Lock,
     Move,
     Transform,

@@ -7,6 +7,8 @@
 #include <Geode/modify/CCLayerColor.hpp>
 #include <Geode/modify/FMODAudioEngine.hpp>
 #include <Geode/modify/EditorPauseLayer.hpp>
+#include <Geode/modify/EditLevelLayer.hpp>
+#include <Geode/modify/EndLevelLayer.hpp>
 #include <Geode/modify/PauseLayer.hpp>
 
 #include <Geode/Geode.hpp>
@@ -558,12 +560,42 @@ class $modify(SFXEditorPauseLayer, EditorPauseLayer) {
     }
 };
 
+class $modify(SFXEditLevelLayer, EditLevelLayer) {
+    $override
+    void onEdit(CCObject* sender) {
+        // i don't use the queue system here because it would play the sound
+        // after the lag spike from loading the level, which isn't ideal
+
+        GEODE_UNWRAP_OR_ELSE(path, err, sfx::getSoundPath(EditorSFX::EnterEditor)) {
+            log::error("{}", err);
+            return EditLevelLayer::onEdit(sender);
+        }
+
+        sfx::altTabFix();
+        FMODAudioEngine::get()->playEffect(path.string(), 1, 0, 0.7f);
+
+        EditLevelLayer::onEdit(sender);
+    }
+};
+
+class $modify(SFXEndLevelLayer, EndLevelLayer) {
+    $override
+    void onEdit(CCObject* sender) {
+        EndLevelLayer::onEdit(sender);
+
+        sfx::altTabFix();
+        // @geode-ignore(unknown-resource)
+        FMODAudioEngine::get()->playEffect("quitSound_01.ogg", 1, 0, 0.7f);
+    }
+};
+
 class $modify(SFXPauseLayer, PauseLayer) {
     $override
     void onEdit(CCObject* sender) {
         PauseLayer::onEdit(sender);
 
+        sfx::altTabFix();
         // @geode-ignore(unknown-resource)
-        FMODAudioEngine::get()->playEffect("quitSound_01.ogg", 1, 0, 0.7);
+        FMODAudioEngine::get()->playEffect("quitSound_01.ogg", 1, 0, 0.7f);
     }
 };
