@@ -26,17 +26,22 @@ enum class EditorSFX {
     Undo,
     Unlock,
     ZoomIn,
-    ZoomOut
+    ZoomOut,
+    _Count
 };
 
 namespace sfx {
     void queue(EditorSFX sound);
+    void removeFromQueue(EditorSFX sound);
     void clearQueue();
+    bool isQueued(EditorSFX sound);
 
     void playQueuedSounds();
     static void playSound(EditorSFX sound);
     static float getSpeed(EditorSFX sound);
 
+    float getCooldown(EditorSFX sound);
+    void setCooldown(EditorSFX sound, float cooldown);
     void updateCooldowns(float dt);
     static void resetCooldown(EditorSFX sound);
 

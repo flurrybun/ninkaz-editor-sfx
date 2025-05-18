@@ -19,42 +19,48 @@ class $modify(MenuLayer) {
     }
 };
 
-std::unordered_set<EditorSFX> queuedSounds;
+std::array<bool, static_cast<size_t>(EditorSFX::_Count)> queuedSounds;
+std::array<float, static_cast<size_t>(EditorSFX::_Count)> soundCooldowns;
 
 constexpr float SOUND_COOLDOWN = 0.03f;
 constexpr float SLIDER_TICK_COOLDOWN = 0.06f;
-std::unordered_map<EditorSFX, float> soundCooldowns;
 
 void sfx::queue(EditorSFX sound) {
-    queuedSounds.insert(sound);
+    queuedSounds[static_cast<size_t>(sound)] = true;
+}
+
+void sfx::removeFromQueue(EditorSFX sound) {
+    queuedSounds[static_cast<size_t>(sound)] = false;
 }
 
 void sfx::clearQueue() {
-    queuedSounds.clear();
+    queuedSounds.fill(false);
+}
+
+bool sfx::isQueued(EditorSFX sound) {
+    return queuedSounds[static_cast<size_t>(sound)];
 }
 
 void sfx::playQueuedSounds() {
-    if (queuedSounds.empty()) return;
-    log::debug("Sounds: {}", queuedSounds.size());
-
-    if (queuedSounds.count(EditorSFX::Paste) || queuedSounds.count(EditorSFX::Duplicate)) {
-        queuedSounds.erase(EditorSFX::Place);
-        queuedSounds.erase(EditorSFX::Select);
+    if (isQueued(EditorSFX::Paste) || isQueued(EditorSFX::Duplicate)) {
+        removeFromQueue(EditorSFX::Place);
+        removeFromQueue(EditorSFX::Select);
     }
 
-    if (queuedSounds.count(EditorSFX::Place)) {
-        queuedSounds.erase(EditorSFX::Select);
+    if (isQueued(EditorSFX::Place)) {
+        removeFromQueue(EditorSFX::Select);
     }
 
-    for (EditorSFX sound : queuedSounds) {
-        playSound(sound);
-    }
+    for (size_t i = 0; i < queuedSounds.size(); ++i) {
+        if (!queuedSounds[i]) continue;
 
-    queuedSounds.clear();
+        playSound(static_cast<EditorSFX>(i));
+        queuedSounds[i] = false;
+    }
 }
 
 static void sfx::playSound(EditorSFX sound) {
-    if (soundCooldowns[sound] > 0.f) {
+    if (getCooldown(sound) > 0.f) {
         log::debug("Sound {} is on cooldown", static_cast<int>(sound));
         return;
     }
@@ -91,22 +97,30 @@ float sfx::getSpeed(EditorSFX sound) {
     }
 }
 
-void sfx::updateCooldowns(float dt) {
-    for (auto& [sound, cooldown] : soundCooldowns) {
-        if (cooldown == 0.f) continue;
+float sfx::getCooldown(EditorSFX sound) {
+    return soundCooldowns[static_cast<size_t>(sound)];
+}
 
-        cooldown -= dt;
-        if (cooldown < 0.f) {
-            cooldown = 0.f;
+void sfx::setCooldown(EditorSFX sound, float cooldown) {
+    soundCooldowns[static_cast<size_t>(sound)] = cooldown;
+}
+
+void sfx::updateCooldowns(float dt) {
+    for (size_t i = 0; i < soundCooldowns.size(); ++i) {
+        if (soundCooldowns[i] == 0.f) continue;
+
+        soundCooldowns[i] -= dt;
+        if (soundCooldowns[i] < 0.f) {
+            soundCooldowns[i] = 0.f;
         }
     }
 }
 
 static void sfx::resetCooldown(EditorSFX sound) {
     if (sound == EditorSFX::SliderTick) {
-        soundCooldowns[sound] = SLIDER_TICK_COOLDOWN;
+        setCooldown(sound, SLIDER_TICK_COOLDOWN);
     } else {
-        soundCooldowns[sound] = SOUND_COOLDOWN;
+        setCooldown(sound, SOUND_COOLDOWN);
     }
 }
 
