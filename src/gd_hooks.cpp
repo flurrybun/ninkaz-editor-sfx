@@ -62,13 +62,16 @@ class $modify(SFXEditorUI, EditorUI) {
 
     $override
     void keyDown(enumKeyCodes key) {
-        bool playDeselectSound = m_selectedObjects->count() > 0 || m_selectedObject;
+        bool playSound = m_selectedObjects->count() > 0 || m_selectedObject;
 
         EditorUI::keyDown(key);
 
         // windows 2.2074 inlines EditorUI::onDeselectAll in EditorUI::keyDown
-        if (key == enumKeyCodes::KEY_D && CCKeyboardDispatcher::get()->getAltKeyPressed()
-        && playDeselectSound) {
+        if (
+            key == enumKeyCodes::KEY_D &&
+            CCKeyboardDispatcher::get()->getAltKeyPressed() &&
+            playSound
+        ) {
             sfx::queue(EditorSFX::Deselect);
         }
     }
@@ -91,10 +94,10 @@ class $modify(SFXEditorUI, EditorUI) {
 
     $override
     void onDeselectAll(CCObject* sender) {
-        bool playDeselectSound = m_selectedObjects->count() > 0 || m_selectedObject;
+        bool playSound = m_selectedObjects->count() > 0 || m_selectedObject;
         EditorUI::onDeselectAll(sender);
 
-        if (playDeselectSound) {
+        if (playSound) {
             sfx::queue(EditorSFX::Deselect);
         }
     }
@@ -137,8 +140,10 @@ class $modify(SFXEditorUI, EditorUI) {
 
     $override
     void onDuplicate(CCObject* sender) {
+        bool playSound = m_selectedObjects->count() > 0 || m_selectedObject;
+
         EditorUI::onDuplicate(sender);
-        if (isEditorButtonDisabled(sender)) return;
+        if (!playSound || isEditorButtonDisabled(sender)) return;
 
         sfx::queue(EditorSFX::Duplicate);
     }
@@ -233,14 +238,22 @@ class $modify(SFXEditorUI, EditorUI) {
 
     $override
     void moveObjectCall(EditCommand p0) {
+        bool playSound = m_selectedObjects->count() > 0 || m_selectedObject;
         EditorUI::moveObjectCall(p0);
-        sfx::queue(EditorSFX::Move);
+
+        if (playSound) {
+            sfx::queue(EditorSFX::Move);
+        }
     }
 
     $override
     void transformObjectCall(EditCommand command) {
+        bool playSound = m_selectedObjects->count() > 0 || m_selectedObject;
         EditorUI::transformObjectCall(command);
-        sfx::queue(EditorSFX::Transform);
+
+        if (playSound) {
+            sfx::queue(EditorSFX::Transform);
+        }
     }
 
     $override
