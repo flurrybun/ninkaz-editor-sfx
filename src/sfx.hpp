@@ -40,10 +40,10 @@ namespace sfx {
     static void playSound(EditorSFX sound);
     static float getSpeed(EditorSFX sound);
 
-    float getCooldown(EditorSFX sound);
     void setCooldown(EditorSFX sound, float cooldown);
     void updateCooldowns(float dt);
     static void resetCooldown(EditorSFX sound);
+    static void resetDelay(EditorSFX sound);
 
     std::string getSoundName(EditorSFX sound);
     geode::Result<std::filesystem::path> getSoundPath(EditorSFX sound);

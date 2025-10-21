@@ -21,6 +21,7 @@ class $modify(MenuLayer) {
 
 std::array<bool, static_cast<size_t>(EditorSFX::_Count)> queuedSounds;
 std::array<float, static_cast<size_t>(EditorSFX::_Count)> soundCooldowns;
+std::array<float, static_cast<size_t>(EditorSFX::_Count)> delayBetweenSounds;
 
 constexpr float SOUND_COOLDOWN = 0.03f;
 constexpr float SLIDER_TICK_COOLDOWN = 0.06f;
@@ -60,7 +61,9 @@ void sfx::playQueuedSounds() {
 }
 
 static void sfx::playSound(EditorSFX sound) {
-    if (getCooldown(sound) > 0.f) {
+    if (soundCooldowns[static_cast<size_t>(sound)] > 0.f) {
+        resetDelay(sound);
+
         log::debug("Sound {} is on cooldown", static_cast<int>(sound));
         return;
     }
@@ -72,56 +75,64 @@ static void sfx::playSound(EditorSFX sound) {
 
     log::debug("Playing sound: {}", path.string());
 
-    resetCooldown(sound);
-    altTabFix();
-
     float volume = Mod::get()->getSettingValue<int64_t>("volume") / 100.f;
     float speed = getSpeed(sound);
+
+    resetCooldown(sound);
+    resetDelay(sound);
+
+    altTabFix();
 
     FMODAudioEngine::get()->playEffect(path.string(), speed, 0, volume);
 }
 
 float sfx::getSpeed(EditorSFX sound) {
+    float delay = delayBetweenSounds[static_cast<size_t>(sound)];
+    float speedMod = 1.f;
+
+    float factor = sound == EditorSFX::SliderTick ? 15.f : 5.f;
+    float minDelay = sound == EditorSFX::SliderTick ? 0.025f : 0.04f;
+
+    if (delay < minDelay) {
+        speedMod += (minDelay - delay) * factor;
+    }
+
     switch (sound) {
         case EditorSFX::Place:
         case EditorSFX::Delete:
         case EditorSFX::Move:
+            return speedMod * generateRandomFloat(0.97f, 1.03f);
+        case EditorSFX::SliderTick:
+            return speedMod * generateRandomFloat(0.94f, 1.06f);
         case EditorSFX::Transform:
         case EditorSFX::ZoomIn:
         case EditorSFX::ZoomOut:
             return generateRandomFloat(0.97f, 1.03f);
-        case EditorSFX::SliderTick:
-            return generateRandomFloat(0.94f, 1.06f);
         default:
             return 1.f;
     }
 }
 
-float sfx::getCooldown(EditorSFX sound) {
-    return soundCooldowns[static_cast<size_t>(sound)];
-}
-
-void sfx::setCooldown(EditorSFX sound, float cooldown) {
-    soundCooldowns[static_cast<size_t>(sound)] = cooldown;
-}
-
 void sfx::updateCooldowns(float dt) {
     for (size_t i = 0; i < soundCooldowns.size(); ++i) {
-        if (soundCooldowns[i] == 0.f) continue;
+        if (soundCooldowns[i] > 0.f) {
+            soundCooldowns[i] -= dt;
+        }
 
-        soundCooldowns[i] -= dt;
-        if (soundCooldowns[i] < 0.f) {
-            soundCooldowns[i] = 0.f;
+        if (delayBetweenSounds[i] < 1.f) {
+            delayBetweenSounds[i] += dt;
         }
     }
 }
 
 static void sfx::resetCooldown(EditorSFX sound) {
-    if (sound == EditorSFX::SliderTick) {
-        setCooldown(sound, SLIDER_TICK_COOLDOWN);
-    } else {
-        setCooldown(sound, SOUND_COOLDOWN);
-    }
+    soundCooldowns[static_cast<size_t>(sound)] = sound == EditorSFX::SliderTick
+        ? SLIDER_TICK_COOLDOWN
+        : SOUND_COOLDOWN;
+}
+
+static void sfx::resetDelay(EditorSFX sound) {
+    delayBetweenSounds[static_cast<size_t>(sound)] = 0.f;
 }
 
 std::string sfx::getSoundName(EditorSFX sound) {
