@@ -62,9 +62,11 @@ class $modify(SFXEditorUI, EditorUI) {
     }
 
     $override
-    void onCreateObject(int p0) {
-        EditorUI::onCreateObject(p0);
-        sfx::queue(EditorSFX::Place);
+    void onCreateObject(int objectID) {
+        EditorUI::onCreateObject(objectID);
+
+        // placing custom object
+        if (objectID < 1) sfx::queue(EditorSFX::Place);
     }
 
     $override
