@@ -16,6 +16,7 @@ using namespace geode::prelude;
 
 class $modify(SFXEditorUI, EditorUI) {
     struct Fields {
+        bool selectionChanged;
         float prevScaleX;
         float prevScaleY;
         float prevRotationAngle;
@@ -61,6 +62,12 @@ class $modify(SFXEditorUI, EditorUI) {
     }
 
     $override
+    void onCreateObject(int p0) {
+        EditorUI::onCreateObject(p0);
+        sfx::queue(EditorSFX::Place);
+    }
+
+    $override
     void keyDown(enumKeyCodes key) {
         bool playSound = m_selectedObjects->count() > 0 || m_selectedObject;
 
@@ -78,13 +85,20 @@ class $modify(SFXEditorUI, EditorUI) {
 
     $override
     void selectObject(GameObject* object, bool p1) {
+        if (m_selectedObject) m_fields->selectionChanged = true;
+
         EditorUI::selectObject(object, p1);
-        sfx::queue(EditorSFX::Select);
+
+        if (m_fields->selectionChanged) {
+            sfx::queue(EditorSFX::Select);
+        }
     }
 
     $override
     void selectObjects(CCArray* objects, bool p1) {
+        m_fields->selectionChanged = objects->count() != 1 || objects->objectAtIndex(0) != m_selectedObject;
         unsigned int prevSelectedObjectCount = m_selectedObjects->count();
+
         EditorUI::selectObjects(objects, p1);
 
         if (prevSelectedObjectCount < m_selectedObjects->count()) {
@@ -258,7 +272,7 @@ class $modify(SFXEditorUI, EditorUI) {
 
     $override
     void onGroupSticky(CCObject* sender) {
-        if (!isEditorButtonDisabled(sender)) {
+        if (!isEditorButtonDisabled(sender) && m_selectedObjects->count() > 0) {
             sfx::queue(EditorSFX::Lock);
         }
 
@@ -267,7 +281,7 @@ class $modify(SFXEditorUI, EditorUI) {
 
     $override
     void onUngroupSticky(CCObject* sender) {
-        if (!isEditorButtonDisabled(sender)) {
+        if (!isEditorButtonDisabled(sender) && m_selectedObjects->count() > 0) {
             sfx::queue(EditorSFX::Unlock);
         }
 
@@ -288,10 +302,7 @@ class $modify(SFXEditorUI, EditorUI) {
     void onLockLayer(CCObject* sender) {
         EditorUI::onLockLayer(sender);
 
-        short currentLayer = m_editorLayer->m_currentLayer;
-        gd::vector<bool>& lockedLayers = m_editorLayer->m_lockedLayers;
-
-        if (lockedLayers[currentLayer]) {
+        if (m_editorLayer->m_lockedLayers[m_editorLayer->m_currentLayer]) {
             sfx::queue(EditorSFX::Lock);
         } else {
             sfx::queue(EditorSFX::Unlock);
@@ -416,13 +427,16 @@ class $modify(SFXLevelEditorLayer, LevelEditorLayer) {
 
     $override
     void handleAction(bool isUndo, CCArray* undoObjects) {
+        if (isUndo && m_undoObjects->count() == 0) return;
+        if (!isUndo && m_redoObjects->count() == 0) return;
+
         if (isUndo) sfx::queue(EditorSFX::Undo);
         else sfx::queue(EditorSFX::Redo);
 
         if (undoObjects->count() == 0) return LevelEditorLayer::handleAction(isUndo, undoObjects);
         auto undoObject = typeinfo_cast<UndoObject*>(undoObjects->lastObject());
 
-        log::info("isUndo: {}", isUndo);
+        // log::info("isUndo: {}", isUndo);
 
         switch (undoObject->m_command) {
             case UndoCommand::Delete: log::info("Delete"); break;
