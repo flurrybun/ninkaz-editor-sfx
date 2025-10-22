@@ -1,17 +1,8 @@
 #include "mod_hooker.hpp"
-#include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/CCLayerColor.hpp>
 #include <Geode/modify/CCMenuItem.hpp>
 
-std::vector<std::function<void(EditorUI*)>> editorUIHooks;
 std::unordered_map<std::string, std::function<void(FLAlertLayer*)>> popupHooks;
-
-void registerEditorUIHook(const std::string& modID, const std::function<void(EditorUI*)>& hookFunction) {
-    if (!Loader::get()->isModLoaded(modID)) return;
-
-    log::debug("Registering EditorUI hook for mod: {}", modID);
-    editorUIHooks.push_back(hookFunction);
-}
 
 void registerPopupHook(const std::string& popupName, const std::string& modID, const std::function<void(FLAlertLayer*)>& hookFunction) {
     if (!Loader::get()->isModLoaded(modID)) return;
@@ -19,25 +10,6 @@ void registerPopupHook(const std::string& popupName, const std::string& modID, c
     log::debug("Registering popup hook for mod: {} on popup: {}", modID, popupName);
     popupHooks[popupName] = hookFunction;
 }
-
-class $modify(EditorUI) {
-    static void onModify(auto& self) {
-        if (!self.setHookPriority("EditorUI::init", Priority::VeryLatePost)) {
-            log::warn("Failed to set hook priority for EditorUI::init");
-        }
-    }
-
-    bool init(LevelEditorLayer* lel) {
-        if (!EditorUI::init(lel)) return false;
-        if (editorUIHooks.empty()) return true;
-
-        for (const auto& hookFunction : editorUIHooks) {
-            hookFunction(this);
-        }
-
-        return true;
-    }
-};
 
 class $modify(CCLayerColor) {
     bool initWithColor(const ccColor4B& color, float width, float height) {
@@ -79,7 +51,7 @@ class $modify(CCMenuItem) {
     void activate() {
         CCMenuItem::activate();
 
-        auto callback = typeinfo_cast<CCSFXCallback*>(getUserObject("sfx-callback"_spr));
+        auto callback = static_cast<CCSFXCallback*>(getUserObject("sfx-callback"_spr));
         if (!callback) return;
 
         callback->execute(this);

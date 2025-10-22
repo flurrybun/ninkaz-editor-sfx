@@ -1,4 +1,5 @@
 #include "sfx.hpp"
+#include "mod_hooker.hpp"
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <Geode/modify/EditButtonBar.hpp>
@@ -400,6 +401,42 @@ class $modify(SFXEditorUI, EditorUI) {
         EditorUI::onPause(sender);
         sfx::queue(EditorSFX::Popup);
     }
+
+    $override
+    void dynamicGroupUpdate(bool p0) {
+        EditorUI::dynamicGroupUpdate(p0);
+        sfx::queue(EditorSFX::ToggleButton);
+    }
+
+    $override
+    void assignNewGroups(bool groupY) {
+        EditorUI::assignNewGroups(groupY);
+        sfx::queue(EditorSFX::ToggleButton);
+    }
+
+    $override
+    void alignObjects(CCArray* objects, bool axisY) {
+        std::vector<CCPoint> prevPositions;
+        prevPositions.reserve(objects->count());
+
+        for (const auto& obj : CCArrayExt<GameObject*>(objects)) {
+            prevPositions.push_back(obj->getPosition());
+        }
+
+        EditorUI::alignObjects(objects, axisY);
+
+        for (size_t i = 0; i < objects->count(); i++) {
+            auto obj = static_cast<GameObject*>(objects->objectAtIndex(i));
+
+            if (
+                std::abs(prevPositions[i].x - obj->getPositionX()) > 0.01f ||
+                std::abs(prevPositions[i].y - obj->getPositionY()) > 0.01f
+            ) {
+                sfx::queue(EditorSFX::Move);
+                break;
+            }
+        }
+    }
 };
 
 class $modify(SFXLevelEditorLayer, LevelEditorLayer) {
@@ -461,6 +498,12 @@ class $modify(SFXLevelEditorLayer, LevelEditorLayer) {
         }
 
         LevelEditorLayer::handleAction(isUndo, undoObjects);
+    }
+
+    $override
+    void resetUnusedColorChannels() {
+        LevelEditorLayer::resetUnusedColorChannels();
+        sfx::queue(EditorSFX::ToggleButton);
     }
 };
 
@@ -548,6 +591,22 @@ class $modify(SFXFMODAudioEngine, FMODAudioEngine) {
 };
 
 class $modify(SFXEditorPauseLayer, EditorPauseLayer) {
+    bool init(LevelEditorLayer* p0) {
+        if (!EditorPauseLayer::init(p0)) return false;
+
+        // im too lazy to RE all the bindings for the checkboxes sorry
+
+        auto menu = getChildByID("options-menu");
+
+        for (const auto& item : menu->getChildrenExt()) {
+            auto checkbox = typeinfo_cast<CCMenuItemToggler*>(item);
+            if (!checkbox) continue;
+
+            setSFX(checkbox, EditorSFX::ToggleButton);
+        }
+
+        return true;
+    }
     $override
     void onExitEditor(CCObject* sender) {
         static_cast<SFXEditorUI*>(EditorUI::get())->unschedule(schedule_selector(SFXEditorUI::updateSFX));
@@ -586,6 +645,25 @@ class $modify(SFXEditorPauseLayer, EditorPauseLayer) {
     void saveLevel() {
         EditorPauseLayer::saveLevel();
         sfx::clearQueue();
+    }
+
+    $override
+    void onUnlockAllLayers(CCObject* sender) {
+        if (m_editorLayer->m_lockedLayers.size() > 0) {
+            sfx::queue(EditorSFX::Unlock);
+        }
+
+        EditorPauseLayer::onUnlockAllLayers(sender);
+    }
+
+    $override
+    void uncheckAllPortals(CCObject* sender) {
+        unsigned int prevGuideCount = m_editorLayer->m_drawGridLayer->m_guideObjects->count();
+        EditorPauseLayer::uncheckAllPortals(sender);
+
+        if (prevGuideCount > m_editorLayer->m_drawGridLayer->m_guideObjects->count()) {
+            sfx::queue(EditorSFX::ToggleButton);
+        }
     }
 };
 
