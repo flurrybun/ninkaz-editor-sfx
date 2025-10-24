@@ -405,33 +405,38 @@ class $modify(SFXEditorUI, EditorUI) {
     $override
     void dynamicGroupUpdate(bool p0) {
         EditorUI::dynamicGroupUpdate(p0);
+        if (!m_selectedObjects || m_selectedObjects->count() == 0) return;
+
         sfx::queue(EditorSFX::ToggleButton);
     }
 
     $override
     void assignNewGroups(bool groupY) {
         EditorUI::assignNewGroups(groupY);
+        if (!m_selectedObjects || m_selectedObjects->count() == 0) return;
+
         sfx::queue(EditorSFX::ToggleButton);
     }
 
     $override
     void alignObjects(CCArray* objects, bool axisY) {
-        std::vector<CCPoint> prevPositions;
+        // i have to use a map since EditorUI::alignObjects reorders the objects array
+
+        std::unordered_map<GameObject*, CCPoint> prevPositions;
         prevPositions.reserve(objects->count());
 
         for (const auto& obj : CCArrayExt<GameObject*>(objects)) {
-            prevPositions.push_back(obj->getPosition());
+            prevPositions[obj] = obj->getPosition();
         }
 
         EditorUI::alignObjects(objects, axisY);
 
-        for (size_t i = 0; i < objects->count(); i++) {
-            auto obj = static_cast<GameObject*>(objects->objectAtIndex(i));
+        for (const auto& [obj, pos] : prevPositions) {
+            bool moved = axisY
+                ? std::abs(pos.y - obj->getPositionY()) > 0.01f
+                : std::abs(pos.x - obj->getPositionX()) > 0.01f;
 
-            if (
-                std::abs(prevPositions[i].x - obj->getPositionX()) > 0.01f ||
-                std::abs(prevPositions[i].y - obj->getPositionY()) > 0.01f
-            ) {
+            if (moved) {
                 sfx::queue(EditorSFX::Move);
                 break;
             }
@@ -649,7 +654,7 @@ class $modify(SFXEditorPauseLayer, EditorPauseLayer) {
 
     $override
     void onUnlockAllLayers(CCObject* sender) {
-        if (m_editorLayer->m_lockedLayers.size() > 0) {
+        if (ranges::contains(m_editorLayer->m_lockedLayers, true)) {
             sfx::queue(EditorSFX::Unlock);
         }
 
