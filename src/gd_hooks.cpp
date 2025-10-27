@@ -72,17 +72,55 @@ class $modify(SFXEditorUI, EditorUI) {
 
     $override
     void keyDown(enumKeyCodes key) {
-        bool playSound = m_selectedObjects->count() > 0 || m_selectedObject;
+        bool hasObjectsSelected = m_selectedObjects->count() > 0 || m_selectedObject;
 
         EditorUI::keyDown(key);
 
+        bool ctrl = CCKeyboardDispatcher::get()->getControlKeyPressed();
+        bool cmd = CCKeyboardDispatcher::get()->getCommandKeyPressed();
+        bool alt = CCKeyboardDispatcher::get()->getAltKeyPressed();
+        bool shift = CCKeyboardDispatcher::get()->getShiftKeyPressed();
+
         // windows 2.2074 inlines EditorUI::onDeselectAll in EditorUI::keyDown
-        if (
-            key == enumKeyCodes::KEY_D &&
-            CCKeyboardDispatcher::get()->getAltKeyPressed() &&
-            playSound
-        ) {
+
+        if (key == KEY_D && !ctrl && !cmd && alt && !shift && hasObjectsSelected) {
             sfx::queue(EditorSFX::Deselect);
+            return;
+        }
+
+        if (key >= KEY_Zero && key <= KEY_Nine) {
+            if ((ctrl || cmd) && !alt && !shift) {
+                sfx::queue(EditorSFX::Copy);
+            } else if (alt && !cmd && !ctrl && !shift) {
+                sfx::queue(EditorSFX::Paste);
+            }
+
+            return;
+        }
+
+        if (ctrl || cmd || alt || shift) return;
+
+        switch (key) {
+            case KEY_F1: // lock preview
+                sfx::queue(EditorSFX::Lock);
+                break;
+            case KEY_F2: // unlock preview
+                sfx::queue(EditorSFX::Unlock);
+                break;
+            case KEY_F3: // toggle preview mode
+                sfx::queue(EditorSFX::ToggleButton);
+                break;
+            case KEY_F4: // toggle particle icons
+                sfx::queue(EditorSFX::ToggleButton);
+                break;
+            case KEY_F5: // toggle show hitboxes
+                sfx::queue(EditorSFX::ToggleButton);
+                break;
+            case KEY_F6: // toggle hide invisible
+                sfx::queue(EditorSFX::ToggleButton);
+                break;
+            default: // don't yell at me compiler ty
+                break;
         }
     }
 
