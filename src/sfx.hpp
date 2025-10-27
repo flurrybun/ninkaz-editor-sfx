@@ -47,9 +47,6 @@ namespace sfx {
 
     std::string getSoundName(EditorSFX sound);
     geode::Result<std::filesystem::path> getSoundPath(EditorSFX sound);
-    std::string getSoundPackName();
-    geode::Result<std::filesystem::path> getSoundPackDir();
-    geode::Result<> moveDefaultSoundPack();
 
     void altTabFix();
     float generateRandomFloat(float min, float max);

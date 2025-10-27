@@ -25,19 +25,15 @@
         "volume": {
             "type": "int",
             "name": "Volume",
-            "default": 100,
+            "default": 50,
             "min": 0,
-            "max": 100,
-            "control": {
-                "arrows": false,
-                "slider": true,
-                "input": true
-            }
+            "max": 200
         },
         "sound-pack": {
-            "type": "string",
-            "name": "Sound Pack Name",
-            "default": "NinKaz's SFX v1"
+            "type": "custom:sound-pack",
+            "name": "Sound Pack",
+            "description": "Use the <cy>arrow buttons</c> to swap which sound pack is in use.\nUse the <co>folder button</co> to open the sound pack in file explorer.\nUse the <cg>plus button</c> to import or create a new sound pack.\nUse the <cr>minus button</c> to delete the selected sound pack.",
+            "default": ""
         }
     }
 }

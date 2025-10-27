@@ -1,23 +1,9 @@
 #include "sfx.hpp"
-#include <Geode/modify/MenuLayer.hpp>
+#include "settings/SoundPackSetting.hpp"
 
 #include <Geode/Geode.hpp>
 #include <random>
 using namespace geode::prelude;
-
-class $modify(MenuLayer) {
-    $override
-    bool init() {
-        if (!MenuLayer::init()) return false;
-
-        auto res = sfx::moveDefaultSoundPack();
-        if (res.isErr()) {
-            log::error("Failed to move default sound pack: {}", res.unwrapErr());
-        }
-
-        return true;
-    }
-};
 
 std::array<bool, static_cast<size_t>(EditorSFX::_Count)> queuedSounds;
 std::array<float, static_cast<size_t>(EditorSFX::_Count)> soundCooldowns;
@@ -167,8 +153,7 @@ std::string sfx::getSoundName(EditorSFX sound) {
 }
 
 Result<std::filesystem::path> sfx::getSoundPath(EditorSFX sound) {
-    GEODE_UNWRAP_INTO(std::filesystem::path soundPackDir, getSoundPackDir());
-
+    std::filesystem::path soundPackDir = Mod::get()->getSettingValue<SoundPack>("sound-pack").path;
     std::string soundName = getSoundName(sound);
     std::vector<std::string> extensions = {".wav", ".mp3", ".ogg", ".flac"};
 
@@ -189,34 +174,6 @@ Result<std::filesystem::path> sfx::getSoundPath(EditorSFX sound) {
     }
 
     return Err("Unable to find file for sound '{}'", soundName);
-}
-
-std::string sfx::getSoundPackName() {
-    return Mod::get()->getSettingValue<std::string>("sound-pack");
-}
-
-Result<std::filesystem::path> sfx::getSoundPackDir() {
-    std::filesystem::path soundPackDir = Mod::get()->getConfigDir() / getSoundPackName();
-
-    if (std::filesystem::exists(soundPackDir)) {
-        return Ok(soundPackDir);
-    }
-
-    return Err("Sound pack directory '{}' does not exist", soundPackDir.string());
-}
-
-Result<> sfx::moveDefaultSoundPack() {
-    auto prevDir = Mod::get()->getResourcesDir();
-    auto newDir = Mod::get()->getConfigDir() / "NinKaz's SFX v1";
-
-    if (!std::filesystem::exists(prevDir)) return Err("Unable to find resources directory: {}", prevDir);
-    if (std::filesystem::exists(newDir)) return Err("Target directory already exists: {}", newDir);
-
-    std::error_code ec;
-    std::filesystem::rename(prevDir, newDir, ec);
-
-    if (ec) return Err("Failed to move directory: {}", ec.message());
-    return Ok();
 }
 
 void sfx::altTabFix() {
