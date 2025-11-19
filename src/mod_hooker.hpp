@@ -18,5 +18,3 @@ public:
 void setCallback(CCNode* node, std::function<void(CCObject*)> callback);
 void setSFX(CCNode* node, EditorSFX sfx);
 void setToggleSFX(CCNode* node, EditorSFX sfxOn, EditorSFX sfxOff);
-
-std::string getNodeName(CCNode* node);

@@ -21,7 +21,7 @@ class $modify(CCLayerColor) {
 
         Loader::get()->queueInMainThread([this]() {
             for (const auto& [popupName, hookFunction] : popupHooks) {
-                if (popupName != getNodeName(this)) continue;
+                if (popupName != getObjectName(this)) continue;
 
                 if (auto popup = typeinfo_cast<FLAlertLayer*>(this)) {
                     hookFunction(popup);
@@ -84,27 +84,4 @@ void setToggleSFX(CCNode* node, EditorSFX sfxOn, EditorSFX sfxOff) {
             sfx::queue(sfxOff);
         }
     });
-}
-
-// this function was ripped straight from devtools and i have no shame
-
-#ifndef GEODE_IS_WINDOWS
-#include <cxxabi.h>
-#endif
-
-std::string getNodeName(CCNode* node) {
-#ifdef GEODE_IS_WINDOWS
-    return typeid(*node).name() + 6;
-#else
-    std::string ret;
-
-    int status = 0;
-    auto demangle = abi::__cxa_demangle(typeid(*node).name(), 0, 0, &status);
-    if (status == 0) {
-        ret = demangle;
-    }
-    free(demangle);
-
-    return ret;
-#endif
 }
