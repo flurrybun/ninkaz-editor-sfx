@@ -17,7 +17,7 @@ using namespace geode::prelude;
 
 class $modify(SFXEditorUI, EditorUI) {
     struct Fields {
-        bool selectionChanged;
+        bool selectionChanged = true;
         float prevScaleX;
         float prevScaleY;
         float prevRotationAngle;
