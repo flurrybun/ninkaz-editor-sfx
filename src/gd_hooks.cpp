@@ -282,6 +282,39 @@ class $modify(SFXEditorUI, EditorUI) {
     }
 
     $override
+    void activateScaleControl(CCObject* sender) {
+        EditorUI::activateScaleControl(sender);
+
+        if (m_selectedObjects->count() > 0 || m_selectedObject) {
+            sfx::queue(EditorSFX::ToggleButton);
+        }
+    }
+
+    $override
+    void activateTransformControl(CCObject* sender) {
+        EditorUI::activateTransformControl(sender);
+
+        if (m_selectedObjects->count() > 0 || m_selectedObject) {
+            sfx::queue(EditorSFX::ToggleButton);
+        }
+    }
+
+    $override
+    void activateRotationControl(CCObject* sender) {
+        bool show = m_rotationControl->isVisible();
+
+        EditorUI::activateRotationControl(sender);
+
+        if (
+            !show &&
+            sender != m_rotateBtn &&
+            !GameManager::get()->getGameVariable("0007")
+        ) {
+            sfx::queue(EditorSFX::ToggleButton);
+        }
+    }
+
+    $override
     void onUpdateDeleteFilter(CCObject* sender) {
         int prevDeleteFilter = GameManager::get()->getIntGameVariable("0005");
         EditorUI::onUpdateDeleteFilter(sender);
