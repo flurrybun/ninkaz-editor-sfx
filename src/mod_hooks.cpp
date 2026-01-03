@@ -66,6 +66,39 @@ class $modify(EditorUI) {
             }
         }
 
+        if (Loader::get()->isModLoaded("alk.allium")) {
+            if (auto bar = typeinfo_cast<EditButtonBar*>(getChildByID("alk.allium/allium-bar"))) {
+                if (auto page = static_cast<ButtonPage*>(bar->m_pagesArray->objectAtIndex(0))) {
+                    if (auto menu = page->getChildByType<CCMenu>(0)) {
+                        setSFX(
+                            menu->getChildByID("alk.allium/pan-toggle"),
+                            EditorSFX::ToggleButton
+                        );
+                        setSFX(
+                            menu->getChildByID("alk.allium/line-toggle"),
+                            EditorSFX::ToggleButton
+                        );
+                        setSFX(
+                            menu->getChildByID("alk.allium/curve-toggle"),
+                            EditorSFX::ToggleButton
+                        );
+                        setSFX(
+                            menu->getChildByID("alk.allium/free-toggle"),
+                            EditorSFX::ToggleButton
+                        );
+                        setSFX(
+                            menu->getChildByID("alk.allium/polygon-toggle"),
+                            EditorSFX::ToggleButton
+                        );
+                        setSFX(
+                            menu->getChildByID("alk.allium/text-toggle"),
+                            EditorSFX::ToggleButton
+                        );
+                    }
+                }
+            }
+        }
+
         return true;
     }
 };
@@ -88,6 +121,10 @@ class $modify(MenuLayer) {
                 setSFX(child, EditorSFX::SwitchTab);
             }
         });
+
+        // registerPopupHook("PasteStatePopup", "ninkaz.editor_utils", [](FLAlertLayer* self) {
+
+        // });
 
         return true;
     }

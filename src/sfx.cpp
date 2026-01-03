@@ -36,6 +36,7 @@ void sfx::playQueuedSounds() {
 
     if (isQueued(EditorSFX::Place)) {
         removeFromQueue(EditorSFX::Select);
+        removeFromQueue(EditorSFX::Lock);
     }
 
     for (size_t i = 0; i < queuedSounds.size(); ++i) {
