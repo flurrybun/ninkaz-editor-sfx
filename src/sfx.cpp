@@ -5,9 +5,9 @@
 #include <random>
 using namespace geode::prelude;
 
-std::array<bool, static_cast<size_t>(EditorSFX::_Count)> queuedSounds;
-std::array<float, static_cast<size_t>(EditorSFX::_Count)> soundCooldowns;
-std::array<float, static_cast<size_t>(EditorSFX::_Count)> delayBetweenSounds;
+std::array<bool, static_cast<size_t>(SFX_COUNT)> queuedSounds;
+std::array<float, static_cast<size_t>(SFX_COUNT)> soundCooldowns;
+std::array<float, static_cast<size_t>(SFX_COUNT)> delayBetweenSounds;
 
 constexpr float SOUND_COOLDOWN = 0.03f;
 constexpr float SLIDER_TICK_COOLDOWN = 0.06f;

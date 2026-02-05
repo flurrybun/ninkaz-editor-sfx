@@ -4,31 +4,32 @@
 #include <Geode/Result.hpp>
 
 enum class EditorSFX {
-    Copy,
-    Delete,
-    Deselect,
-    Duplicate,
-    EnterEditor,
-    Lock,
-    Move,
-    Transform,
-    Paste,
-    Place,
-    Popup,
-    Redo,
-    Select,
-    SliderTick,
-    SwitchMode,
-    SwitchTab,
-    SwitchObject,
-    SwitchLayer,
-    ToggleButton,
-    Undo,
-    Unlock,
-    ZoomIn,
-    ZoomOut,
-    _Count
+    Copy = 0,
+    Delete = 1,
+    Deselect = 2,
+    Duplicate = 3,
+    EnterEditor = 4,
+    Lock = 5,
+    Move = 6,
+    Transform = 7,
+    Paste = 8,
+    Place = 9,
+    Popup = 10,
+    Redo = 11,
+    Select = 12,
+    SliderTick = 13,
+    SwitchMode = 14,
+    SwitchTab = 15,
+    SwitchObject = 16,
+    SwitchLayer = 17,
+    ToggleButton = 18,
+    Undo = 19,
+    Unlock = 20,
+    ZoomIn = 21,
+    ZoomOut = 22
 };
+
+constexpr int SFX_COUNT = 23;
 
 namespace sfx {
     void queue(EditorSFX sound);
