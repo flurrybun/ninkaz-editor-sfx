@@ -763,8 +763,8 @@ class $modify(SFXEditLevelLayer, EditLevelLayer) {
 
 class $modify(SFXEndLevelLayer, EndLevelLayer) {
     $override
-    void onEdit(CCObject* sender) {
-        EndLevelLayer::onEdit(sender);
+    void goEdit() {
+        EndLevelLayer::goEdit();
 
         sfx::altTabFix();
         // @geode-ignore(unknown-resource)
@@ -774,8 +774,8 @@ class $modify(SFXEndLevelLayer, EndLevelLayer) {
 
 class $modify(SFXPauseLayer, PauseLayer) {
     $override
-    void onEdit(CCObject* sender) {
-        PauseLayer::onEdit(sender);
+    void goEdit() {
+        PauseLayer::goEdit();
 
         sfx::altTabFix();
         // @geode-ignore(unknown-resource)
