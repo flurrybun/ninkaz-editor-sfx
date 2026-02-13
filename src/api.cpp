@@ -8,3 +8,7 @@ using namespace geode::prelude;
 void sfx::play(sfx::Sound sound) {
     sfx::queue(static_cast<EditorSFX>(sound));
 }
+
+void sfx::suppress(sfx::Sound sound) {
+    sfx::suppressSound(static_cast<EditorSFX>(sound));
+}

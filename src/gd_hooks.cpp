@@ -30,9 +30,6 @@ class $modify(SFXEditorUI, EditorUI) {
         if (!self.setHookPriorityBeforePre("EditorUI::scrollWheel", "hjfod.betteredit")) {
             log::warn("Failed to set hook priority for EditorUI::scrollWheel");
         }
-        if (!self.setHookPriorityAfterPost("EditorUI::onPasteState", "ninkaz.editor_utils")) {
-            log::warn("Failed to set hook priority for EditorUI::onPasteState");
-        }
     }
 
     $override

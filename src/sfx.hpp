@@ -37,6 +37,8 @@ namespace sfx {
     void clearQueue();
     bool isQueued(EditorSFX sound);
 
+    void suppressSound(EditorSFX sound);
+
     void playQueuedSounds();
     static void playSound(EditorSFX sound);
     static float getSpeed(EditorSFX sound);

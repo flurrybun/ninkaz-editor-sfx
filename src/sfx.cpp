@@ -6,6 +6,7 @@
 using namespace geode::prelude;
 
 std::array<bool, static_cast<size_t>(SFX_COUNT)> queuedSounds;
+std::array<bool, static_cast<size_t>(SFX_COUNT)> suppressedSounds;
 std::array<float, static_cast<size_t>(SFX_COUNT)> soundCooldowns;
 std::array<float, static_cast<size_t>(SFX_COUNT)> delayBetweenSounds;
 
@@ -28,6 +29,10 @@ bool sfx::isQueued(EditorSFX sound) {
     return queuedSounds[static_cast<size_t>(sound)];
 }
 
+void sfx::suppressSound(EditorSFX sound) {
+    suppressedSounds[static_cast<size_t>(sound)] = true;
+}
+
 void sfx::playQueuedSounds() {
     if (isQueued(EditorSFX::Paste) || isQueued(EditorSFX::Duplicate)) {
         removeFromQueue(EditorSFX::Place);
@@ -41,6 +46,11 @@ void sfx::playQueuedSounds() {
 
     for (size_t i = 0; i < queuedSounds.size(); ++i) {
         if (!queuedSounds[i]) continue;
+
+        if (suppressedSounds[i]) {
+            suppressedSounds[i] = false;
+            continue;
+        }
 
         playSound(static_cast<EditorSFX>(i));
         queuedSounds[i] = false;
