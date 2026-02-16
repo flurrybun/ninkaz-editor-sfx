@@ -1,6 +1,8 @@
 #include "CreateSoundPackPopup.hpp"
 
-bool CreateSoundPackPopup::setup(SoundPackSettingNode* settingNode) {
+bool CreateSoundPackPopup::init(SoundPackSettingNode* settingNode) {
+    if (!Popup::init(370.f, 230.f)) return false;
+
     setTitle("Add Sound Pack");
     m_settingNode = settingNode;
 
@@ -94,32 +96,30 @@ CCNode* CreateSoundPackPopup::createOption(
 }
 
 void CreateSoundPackPopup::onImport(CCObject* sender) {
-    m_pickListener.bind([this](geode::Task<geode::Result<std::filesystem::path>>::Event* event) {
-        auto value = event->getValue();
-        if (!value) return;
+    async::spawn(
+        file::pick(
+            file::PickMode::OpenFolder,
+            {
+                Mod::get()->getConfigDir(),
+                std::vector<file::FilePickOptions::Filter>()
+            }
+        ),
+        [this](Result<std::optional<std::filesystem::path>> result) {
+            if (result.isErr()) {
+                FLAlertLayer::create(
+                    "Error",
+                    fmt::format("Failed to add sound pack: {}", result.unwrapErr()),
+                    "OK"
+                )->show();
+                return;
+            }
 
-        if (value->isErr()) {
-            FLAlertLayer::create(
-                "Error",
-                fmt::format("Failed to add sound pack: {}", value->unwrapErr()),
-                "OK"
-            )->show();
-            return;
+            auto path = result.unwrap();
+            if (!path) return;
+
+            validateSoundPackDir(*path);
         }
-
-        auto path = value->unwrap();
-        validateSoundPackDir(path);
-    });
-
-    std::error_code ec;
-
-    m_pickListener.setFilter(file::pick(
-        file::PickMode::OpenFolder,
-        {
-            Mod::get()->getConfigDir(),
-            std::vector<file::FilePickOptions::Filter>()
-        }
-    ));
+    );
 }
 
 void CreateSoundPackPopup::onCreate(CCObject* sender) {

@@ -5,14 +5,12 @@
 
 using namespace geode::prelude;
 
-class CreateSoundPackPopup : public Popup<SoundPackSettingNode*> {
+class CreateSoundPackPopup : public Popup {
 protected:
     SoundPackSettingNode* m_settingNode;
-    EventListener<Task<Result<std::filesystem::path>>> m_pickListener;
-    // CCMenuItemSpriteExtra* m_createBtn;
     TextInput* m_input;
 
-    bool setup(SoundPackSettingNode* settingNode) override;
+    bool init(SoundPackSettingNode* settingNode);
     CCNode* createOption(
         const std::string& header, const std::string& description, SEL_MenuHandler callback, bool addInput
     );
@@ -25,7 +23,8 @@ protected:
 public:
     static CreateSoundPackPopup* create(SoundPackSettingNode* settingNode) {
         auto ret = new CreateSoundPackPopup();
-        if (ret->initAnchored(370.f, 230.f, settingNode)) {
+
+        if (ret->init(settingNode)) {
             ret->autorelease();
             return ret;
         }

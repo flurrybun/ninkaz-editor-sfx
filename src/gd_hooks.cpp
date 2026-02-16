@@ -68,10 +68,10 @@ class $modify(SFXEditorUI, EditorUI) {
     }
 
     $override
-    void keyDown(enumKeyCodes key) {
+    void keyDown(enumKeyCodes key, double timestamp) {
         bool hasObjectsSelected = m_selectedObjects->count() > 0 || m_selectedObject;
 
-        EditorUI::keyDown(key);
+        EditorUI::keyDown(key, timestamp);
 
         bool ctrl = CCKeyboardDispatcher::get()->getControlKeyPressed();
         bool cmd = CCKeyboardDispatcher::get()->getCommandKeyPressed();
