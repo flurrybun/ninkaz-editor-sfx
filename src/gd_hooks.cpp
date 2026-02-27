@@ -15,6 +15,16 @@
 #include <Geode/Geode.hpp>
 using namespace geode::prelude;
 
+// mods shouldn't be able to overwrite sfx, preferring sfx::suppress in the optional api
+// unless they REALLY want to,,,,,, (Priority::First)
+
+#define SET_ALL_HOOK_PRIORITY \
+    static void onModify(auto& self) { \
+        for (const auto& [ _, hook ] : self.m_hooks) { \
+            hook->setPriority(Priority::VeryEarlyPre); \
+        } \
+    }
+
 class $modify(SFXEditorUI, EditorUI) {
     struct Fields {
         bool selectionChanged = true;
@@ -23,14 +33,7 @@ class $modify(SFXEditorUI, EditorUI) {
         float prevRotationAngle;
     };
 
-    static void onModify(auto& self) {
-        if (!self.setHookPriorityBeforePre("EditorUI::angleChanged", "hjfod.betteredit")) {
-            log::warn("Failed to set hook priority for EditorUI::angleChanged");
-        }
-        if (!self.setHookPriorityBeforePre("EditorUI::scrollWheel", "hjfod.betteredit")) {
-            log::warn("Failed to set hook priority for EditorUI::scrollWheel");
-        }
-    }
+    SET_ALL_HOOK_PRIORITY;
 
     $override
     bool init(LevelEditorLayer* lel) {
@@ -513,6 +516,8 @@ class $modify(SFXEditorUI, EditorUI) {
 };
 
 class $modify(SFXLevelEditorLayer, LevelEditorLayer) {
+    SET_ALL_HOOK_PRIORITY;
+
     $override
     GameObject* createObject(int p0, CCPoint p1, bool p2) {
         sfx::queue(EditorSFX::Place);
@@ -581,6 +586,8 @@ class $modify(SFXLevelEditorLayer, LevelEditorLayer) {
 };
 
 class $modify(SFXEditButtonBar, EditButtonBar) {
+    SET_ALL_HOOK_PRIORITY;
+
     $override
     void onLeft(CCObject* sender) {
         EditButtonBar::onLeft(sender);
@@ -595,6 +602,8 @@ class $modify(SFXEditButtonBar, EditButtonBar) {
 };
 
 class $modify(SFXGJScaleControl, GJScaleControl) {
+    SET_ALL_HOOK_PRIORITY;
+
     $override
     void onToggleLockScale(CCObject* sender) {
         GJScaleControl::onToggleLockScale(sender);
@@ -608,6 +617,8 @@ class $modify(SFXGJScaleControl, GJScaleControl) {
 };
 
 class $modify(SFXGJTransformControl, GJTransformControl) {
+    SET_ALL_HOOK_PRIORITY;
+
     $override
     void onToggleLockScale(CCObject* sender) {
         GJTransformControl::onToggleLockScale(sender);
@@ -621,6 +632,8 @@ class $modify(SFXGJTransformControl, GJTransformControl) {
 };
 
 class $modify(SFXCCLayerColor, CCLayerColor) {
+    SET_ALL_HOOK_PRIORITY;
+
     // plays sfx for top-level popups
     // hooks cclayercolor because some popups skip over flalertlayer init
 
@@ -655,6 +668,8 @@ class $modify(SFXFMODAudioEngine, FMODAudioEngine) {
         bool shouldUnloadAllEffects = true;
     };
 
+    SET_ALL_HOOK_PRIORITY;
+
     $override
     void unloadAllEffects() {
         if (m_fields->shouldUnloadAllEffects) {
@@ -664,6 +679,8 @@ class $modify(SFXFMODAudioEngine, FMODAudioEngine) {
 };
 
 class $modify(SFXEditorPauseLayer, EditorPauseLayer) {
+    SET_ALL_HOOK_PRIORITY;
+
     bool init(LevelEditorLayer* p0) {
         if (!EditorPauseLayer::init(p0)) return false;
 
@@ -680,6 +697,7 @@ class $modify(SFXEditorPauseLayer, EditorPauseLayer) {
 
         return true;
     }
+
     $override
     void onExitEditor(CCObject* sender) {
         static_cast<SFXEditorUI*>(EditorUI::get())->unschedule(schedule_selector(SFXEditorUI::updateSFX));
@@ -741,6 +759,8 @@ class $modify(SFXEditorPauseLayer, EditorPauseLayer) {
 };
 
 class $modify(SFXEditLevelLayer, EditLevelLayer) {
+    SET_ALL_HOOK_PRIORITY;
+
     $override
     void onEdit(CCObject* sender) {
         // i don't use the queue system here because it would play the sound
@@ -759,6 +779,8 @@ class $modify(SFXEditLevelLayer, EditLevelLayer) {
 };
 
 class $modify(SFXEndLevelLayer, EndLevelLayer) {
+    SET_ALL_HOOK_PRIORITY;
+
     $override
     void goEdit() {
         EndLevelLayer::goEdit();
@@ -770,6 +792,8 @@ class $modify(SFXEndLevelLayer, EndLevelLayer) {
 };
 
 class $modify(SFXPauseLayer, PauseLayer) {
+    SET_ALL_HOOK_PRIORITY;
+
     $override
     void goEdit() {
         PauseLayer::goEdit();
