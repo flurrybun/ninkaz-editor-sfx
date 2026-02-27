@@ -46,6 +46,10 @@ class $modify(EditorUI) {
                 m_rotationControl->querySelector("hjfod.betteredit/snap-lock-size"),
                 EditorSFX::ToggleButton
             );
+            setSFX(
+                querySelector("> toolbar-categories-menu > hjfod.betteredit/view-button"),
+                EditorSFX::SwitchMode
+            );
         }
 
         if (Loader::get()->isModLoaded("razoom.object_groups")) {
@@ -95,6 +99,20 @@ class $modify(EditorUI) {
                             EditorSFX::ToggleButton
                         );
                     }
+                }
+            }
+        }
+
+        if (Loader::get()->isModLoaded("alphalaneous.editortab_api")) {
+            if (auto nav = getChildByID("alphalaneous.editortab_api/tabs-navigation-menu")) {
+                for (auto child : nav->getChildrenExt()) {
+                    setSFX(child, EditorSFX::SwitchTab);
+                }
+            }
+
+            if (auto tabs = getChildByID("build-tabs-menu")) {
+                for (auto child : tabs->getChildrenExt()) {
+                    setSFX(child, EditorSFX::SwitchTab);
                 }
             }
         }
