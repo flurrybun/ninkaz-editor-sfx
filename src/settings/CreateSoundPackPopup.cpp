@@ -1,9 +1,17 @@
 #include "CreateSoundPackPopup.hpp"
 
 bool CreateSoundPackPopup::init(SoundPackSettingNode* settingNode) {
-    if (!Popup::init(370.f, 230.f)) return false;
+    // @geode-ignore(unknown-resource)
+    if (!Popup::init(370.f, 230.f, "geode.loader/GE_square01.png")) return false;
 
     setTitle("Add Sound Pack");
+    setCloseButtonSpr(
+        CircleButtonSprite::createWithSpriteFrameName(
+            // @geode-ignore(unknown-resource)
+            "geode.loader/close.png", 0.85f, CircleBaseColor::DarkPurple
+        )
+    );
+
     m_settingNode = settingNode;
 
     auto importPackOption = createOption(
@@ -66,12 +74,12 @@ CCNode* CreateSoundPackPopup::createOption(
 
     if (addInput) {
         auto createTop = CCSprite::createWithSpriteFrameName("edit_addCBtn_001.png");
-        auto createBase = CCSprite::create("GJ_button_01.png");
+        // @geode-ignore(unknown-resource)
+        auto createBase = CCSprite::create("geode.loader/GE_button_05.png");
         createBase->setScale(0.6f);
         createBase->addChildAtPosition(createTop, Anchor::Center);
 
         auto createBtn = CCMenuItemSpriteExtra::create(createBase, this, callback);
-        createBtn->setAnchorPoint({ 1.f, 0.5f });
 
         // this is just excluding the characters that are invalid in folder names on windows
         // perhaps other platforms have more lax rules but i don't think it matters much
@@ -82,11 +90,10 @@ CCNode* CreateSoundPackPopup::createOption(
         m_input->setFilter("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ#_-+&$%^~\'{}()[]=!@,;. ");
 
         menu->addChildAtPosition(m_input, Anchor::Right, { -30.f, 0.f });
-        menu->addChildAtPosition(createBtn, Anchor::Right);
+        menu->addChildAtPosition(createBtn, Anchor::Right, { -12.f, 0.f });
     } else {
-        auto buttonSpr = ButtonSprite::create(
-            "Import", "bigFont.fnt", "GJ_button_01.png"
-        );
+        // @geode-ignore(unknown-resource)
+        auto buttonSpr = ButtonSprite::create("Import", "bigFont.fnt", "geode.loader/GE_button_05.png");
         buttonSpr->setScale(0.7f);
         auto button = CCMenuItemSpriteExtra::create(buttonSpr, this, callback);
         menu->addChildAtPosition(button, Anchor::Right, { -46.5f, 0.f });

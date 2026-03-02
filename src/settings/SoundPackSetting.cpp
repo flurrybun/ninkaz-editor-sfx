@@ -151,53 +151,6 @@ void SoundPackSettingNode::onArrow(CCObject* sender) {
 }
 
 void SoundPackSettingNode::onAdd(CCObject* sender) {
-    // m_pickListener.bind([this](geode::Task<geode::Result<std::filesystem::path>>::Event* event) {
-    //     auto value = event->getValue();
-    //     if (!value) return;
-
-    //     if (value->isErr()) {
-    //         FLAlertLayer::create(
-    //             "Error",
-    //             fmt::format("Failed to add sound pack: {}", value->unwrapErr()),
-    //             "OK"
-    //         )->show();
-    //         return;
-    //     }
-
-    //     auto srcDir = value->unwrap();
-    //     auto destDir = Mod::get()->getConfigDir() / srcDir.filename();
-
-    //     std::error_code ec;
-    //     std::filesystem::copy(srcDir, destDir, std::filesystem::copy_options::recursive, ec);
-
-    //     if (ec) {
-    //         FLAlertLayer::create(
-    //             "Error",
-    //             fmt::format("Failed to copy sound pack into config folder: {}", ec.message()),
-    //             "OK"
-    //         )->show();
-    //         return;
-    //     }
-
-    //     FLAlertLayer::create(
-    //         "Success",
-    //         fmt::format("Successfully added sound pack \"{}\".", getNameForSoundPackPath(destDir)),
-    //         "OK"
-    //     )->show();
-
-    //     setValue(destDir, nullptr);
-    // });
-
-    // std::error_code ec;
-
-    // m_pickListener.setFilter(file::pick(
-    //     file::PickMode::OpenFolder,
-    //     {
-    //         Mod::get()->getConfigDir(),
-    //         std::vector<file::FilePickOptions::Filter>()
-    //     }
-    // ));
-
     auto popup = CreateSoundPackPopup::create(this);
     popup->show();
 }
