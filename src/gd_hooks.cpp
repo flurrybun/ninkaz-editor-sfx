@@ -5,6 +5,7 @@
 #include <Geode/modify/EditButtonBar.hpp>
 #include <Geode/modify/GJScaleControl.hpp>
 #include <Geode/modify/GJTransformControl.hpp>
+#include <Geode/modify/HSVLiveOverlay.hpp>
 #include <Geode/modify/CCLayerColor.hpp>
 #include <Geode/modify/FMODAudioEngine.hpp>
 #include <Geode/modify/EditorPauseLayer.hpp>
@@ -119,7 +120,16 @@ class $modify(SFXEditorUI, EditorUI) {
             case KEY_F6: // toggle hide invisible
                 sfx::queue(EditorSFX::ToggleButton);
                 break;
-            default: // don't yell at me compiler ty
+            case KEY_F7: // toggle link controls
+                sfx::queue(EditorSFX::ToggleButton);
+                break;
+            case KEY_F8: // disable trace in
+                sfx::queue(EditorSFX::ToggleButton);
+                break;
+            case KEY_F9: // disable trace out
+                sfx::queue(EditorSFX::ToggleButton);
+                break;
+            default:
                 break;
         }
     }
@@ -225,6 +235,20 @@ class $modify(SFXEditorUI, EditorUI) {
         if (isEditorButtonDisabled(sender)) return;
 
         sfx::queue(EditorSFX::Paste);
+    }
+
+    $override
+    void editColor() {
+        EditorUI::editColor();
+
+        sfx::queue(EditorSFX::Popup);
+    }
+
+    $override
+    void editHSV() {
+        EditorUI::editHSV();
+
+        sfx::queue(EditorSFX::Popup);
     }
 
     $override
@@ -346,20 +370,29 @@ class $modify(SFXEditorUI, EditorUI) {
 
     $override
     void onGroupSticky(CCObject* sender) {
-        if (!isEditorButtonDisabled(sender) && m_selectedObjects->count() > 0) {
+        bool playSound = !isEditorButtonDisabled(sender) && m_selectedObjects->count() > 0;
+        EditorUI::onGroupSticky(sender);
+
+        if (playSound) {
             sfx::queue(EditorSFX::Lock);
         }
-
-        EditorUI::onGroupSticky(sender);
     }
 
     $override
     void onUngroupSticky(CCObject* sender) {
-        if (!isEditorButtonDisabled(sender) && m_selectedObjects->count() > 0) {
+        bool playSound = !isEditorButtonDisabled(sender) && m_selectedObjects->count() > 0;
+        EditorUI::onUngroupSticky(sender);
+
+        if (playSound) {
             sfx::queue(EditorSFX::Unlock);
         }
+    }
 
-        EditorUI::onUngroupSticky(sender);
+    $override
+    void onStickyToggle(CCObject* sender) {
+        EditorUI::onStickyToggle(sender);
+
+        sfx::queue(EditorSFX::ToggleButton);
     }
 
     $override
@@ -628,6 +661,17 @@ class $modify(SFXGJTransformControl, GJTransformControl) {
         } else {
             sfx::queue(EditorSFX::Unlock);
         }
+    }
+};
+
+class $modify(SFXHSVLiveOverlay, HSVLiveOverlay) {
+    SET_ALL_HOOK_PRIORITY;
+
+    $override
+    void onSelectTab(CCObject* sender) {
+        HSVLiveOverlay::onSelectTab(sender);
+
+        sfx::queue(EditorSFX::ToggleButton);
     }
 };
 
