@@ -73,6 +73,15 @@ void setSFX(CCNode* node, EditorSFX sfx) {
     });
 }
 
+void setToggleSFX(CCNode* node, EditorSFX sfx) {
+    setCallback(node, [sfx](CCObject* sender) {
+        auto button = typeinfo_cast<CCMenuItemToggler*>(sender);
+        if (!button) return;
+
+        sfx::queue(sfx);
+    });
+}
+
 void setToggleSFX(CCNode* node, EditorSFX sfxOn, EditorSFX sfxOff) {
     setCallback(node, [sfxOn, sfxOff](CCObject* sender) {
         auto button = typeinfo_cast<CCMenuItemToggler*>(sender);
