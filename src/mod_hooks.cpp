@@ -52,22 +52,50 @@ class $modify(EditorUI) {
             );
         }
 
-        if (Loader::get()->isModLoaded("razoom.object_groups")) {
-            for (auto editButtonBar : CCArrayExt<EditButtonBar*>(m_createButtonBars)) {
-                for (auto page : CCArrayExt<ButtonPage*>(editButtonBar->m_pagesArray)) {
-                    auto menu = page->getChildByType<CCMenu>(0);
-                    if (!menu) continue;
+        if (Loader::get()->isModLoaded("alphalaneous.tinker")) {
+            setSFX(
+                querySelector("undo-menu > alphalaneous.tinker/hide-ui-toggle"),
+                EditorSFX::ToggleButton
+            );
+            setSFX(
+                querySelector("alphalaneous.tinker/grid-size-controls")->getChildByType<CCMenuItemSpriteExtra>(0),
+                EditorSFX::ZoomIn
+            );
+            setSFX(
+                querySelector("alphalaneous.tinker/grid-size-controls")->getChildByType<CCMenuItemSpriteExtra>(1),
+                EditorSFX::ZoomOut
+            );
 
-                    for (auto child : CCArrayExt<CCNode*>(menu->getChildren())) {
-                        auto menuItem = typeinfo_cast<CreateMenuItem*>(child);
-                        if (!menuItem) continue;
-
-                        if (child->getTag() == 0) {
-                            setSFX(menuItem, EditorSFX::SwitchTab);
-                        }
-                    }
+            for (auto node : CCArrayExt<CCNode>(m_editButtonBar->m_buttonArray)) {
+                if (node->getID() == "alphalaneous.tinker/center-objects") {
+                    setSFX(node, EditorSFX::Move);
+                } else if (node->getID() == "alphalaneous.tinker/center-camera") {
+                    setSFX(node, EditorSFX::ToggleButton);
+                } else if (node->getID() == "alphalaneous.tinker/reference-import") {
+                    setSFX(node, EditorSFX::ToggleButton);
                 }
             }
+
+            setToggleSFX(
+                m_scaleControl->querySelector("alphalaneous.tinker/snap-lock"),
+                EditorSFX::Lock, EditorSFX::Unlock
+            );
+            setToggleSFX(
+                m_rotationControl->querySelector("alphalaneous.tinker/snap-lock"),
+                EditorSFX::Lock, EditorSFX::Unlock
+            );
+            setToggleSFX(
+                m_rotationControl->querySelector("alphalaneous.tinker/pos-lock"),
+                EditorSFX::Lock, EditorSFX::Unlock
+            );
+            setSFX(
+                m_scaleControl->querySelector("alphalaneous.tinker/snap-values"),
+                EditorSFX::ToggleButton
+            );
+            setSFX(
+                m_rotationControl->querySelector("alphalaneous.tinker/snap-values"),
+                EditorSFX::ToggleButton
+            );
         }
 
         if (Loader::get()->isModLoaded("alk.allium")) {

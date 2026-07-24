@@ -640,6 +640,7 @@ class $modify(SFXGJScaleControl, GJScaleControl) {
     $override
     void onToggleLockScale(CCObject* sender) {
         GJScaleControl::onToggleLockScale(sender);
+        if (!isVisible()) return;
 
         if (m_scaleLocked) {
             sfx::queue(EditorSFX::Lock);
@@ -655,6 +656,7 @@ class $modify(SFXGJTransformControl, GJTransformControl) {
     $override
     void onToggleLockScale(CCObject* sender) {
         GJTransformControl::onToggleLockScale(sender);
+        if (!isVisible()) return;
 
         if (m_warpLocked) {
             sfx::queue(EditorSFX::Lock);

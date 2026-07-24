@@ -69,6 +69,9 @@ void setCallback(CCNode* node, std::function<void(CCObject*)> callback) {
 
 void setSFX(CCNode* node, EditorSFX sfx) {
     setCallback(node, [sfx](CCObject* sender) {
+        auto node = typeinfo_cast<CCNode*>(sender);
+        if (!node || !nodeIsVisible(node)) return;
+
         sfx::queue(sfx);
     });
 }
@@ -76,7 +79,7 @@ void setSFX(CCNode* node, EditorSFX sfx) {
 void setToggleSFX(CCNode* node, EditorSFX sfx) {
     setCallback(node, [sfx](CCObject* sender) {
         auto button = typeinfo_cast<CCMenuItemToggler*>(sender);
-        if (!button) return;
+        if (!button || !nodeIsVisible(button)) return;
 
         sfx::queue(sfx);
     });
@@ -85,7 +88,7 @@ void setToggleSFX(CCNode* node, EditorSFX sfx) {
 void setToggleSFX(CCNode* node, EditorSFX sfxOn, EditorSFX sfxOff) {
     setCallback(node, [sfxOn, sfxOff](CCObject* sender) {
         auto button = typeinfo_cast<CCMenuItemToggler*>(sender);
-        if (!button) return;
+        if (!button || !nodeIsVisible(button)) return;
 
         if (button->isOn()) {
             sfx::queue(sfxOn);
