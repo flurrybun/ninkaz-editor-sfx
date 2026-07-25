@@ -1,36 +1,36 @@
 #include "mod_hooker.hpp"
-#include <Geode/modify/CCMenuItem.hpp>
 
-CCSFXCallback* CCSFXCallback::create(const std::function<void(CCObject*)>& callback) {
-    auto obj = new CCSFXCallback();
+SFXCallback* SFXCallback::create(
+    const std::function<void(CCObject*)>& callback, SEL_MenuHandler selector, CCObject* listener
+) {
+    auto obj = new SFXCallback();
     obj->autorelease();
+
     obj->m_callback = callback;
+    obj->m_selector = selector;
+    obj->m_listener = listener;
+
     return obj;
 }
 
-void CCSFXCallback::execute(CCObject* sender) {
-    if (m_callback) m_callback(sender);
+void SFXCallback::execute(CCObject* sender) {
+    m_callback(sender);
+    (m_listener->*m_selector)(sender);
 }
-
-class $modify(CCMenuItem) {
-    $override
-    void activate() {
-        CCMenuItem::activate();
-
-        auto callback = static_cast<CCSFXCallback*>(getUserObject("sfx-callback"_spr));
-        if (!callback) return;
-
-        callback->execute(this);
-    }
-};
 
 void setCallback(CCNode* node, std::function<void(CCObject*)> callback) {
     if (!node) return;
 
-    if (auto button = typeinfo_cast<CCMenuItem*>(node)) {
-        auto sfxCallback = CCSFXCallback::create(callback);
-        button->setUserObject("sfx-callback"_spr, sfxCallback);
-    }
+    auto button = typeinfo_cast<CCMenuItem*>(node);
+    if (!button) return;
+
+    auto sfxCallback = SFXCallback::create(callback, button->m_pfnSelector, button->m_pListener);
+
+    button->m_pfnSelector = menu_selector(SFXCallback::execute);
+    button->m_pListener = sfxCallback;
+
+    // prevent callback from being garbage collected
+    button->setUserObject("sfx-callback"_spr, sfxCallback);
 }
 
 void setSFX(CCNode* node, EditorSFX sfx) {

@@ -5,11 +5,15 @@
 #include <Geode/Geode.hpp>
 using namespace geode::prelude;
 
-class CCSFXCallback : public CCObject {
+class SFXCallback : public CCObject {
 private:
     std::function<void(CCObject*)> m_callback;
+    SEL_MenuHandler m_selector;
+    CCObject* m_listener;
 public:
-    static CCSFXCallback* create(const std::function<void(CCObject*)>& callback);
+    static SFXCallback* create(
+        const std::function<void(CCObject*)>& callback, SEL_MenuHandler selector, CCObject* listener
+    );
     void execute(CCObject* sender);
 };
 
