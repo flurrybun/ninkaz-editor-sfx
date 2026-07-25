@@ -61,7 +61,7 @@ static void sfx::playSound(EditorSFX sound) {
     if (soundCooldowns[static_cast<size_t>(sound)] > 0.f) {
         resetDelay(sound);
 
-        log::debug("Sound {} is on cooldown", static_cast<int>(sound));
+        // log::debug("Sound {} is on cooldown", static_cast<int>(sound));
         return;
     }
 
@@ -70,7 +70,7 @@ static void sfx::playSound(EditorSFX sound) {
         return;
     }
 
-    log::debug("Playing sound: {}", path.string());
+    // log::debug("Playing sound: {}", path.string());
 
     float volume = Mod::get()->getSettingValue<int64_t>("volume") / 100.f;
     float speed = getSpeed(sound);
