@@ -5,8 +5,6 @@
 #include <Geode/Geode.hpp>
 using namespace geode::prelude;
 
-void registerPopupHook(const std::string& popupName, const std::string& modID, const std::function<void(FLAlertLayer*)>& hookFunction);
-
 class CCSFXCallback : public CCObject {
 private:
     std::function<void(CCObject*)> m_callback;

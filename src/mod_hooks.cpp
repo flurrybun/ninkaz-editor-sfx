@@ -1,7 +1,6 @@
 #include "sfx.hpp"
 #include "mod_hooker.hpp"
 #include <Geode/modify/EditorUI.hpp>
-#include <Geode/modify/MenuLayer.hpp>
 
 #include <Geode/Geode.hpp>
 using namespace geode::prelude;
@@ -144,29 +143,6 @@ class $modify(EditorUI) {
                 }
             }
         }
-
-        return true;
-    }
-};
-
-class $modify(MenuLayer) {
-    $override
-    bool init() {
-        if (!MenuLayer::init()) return false;
-
-        static bool hooksRegistered = false;
-
-        if (hooksRegistered) return true;
-        hooksRegistered = true;
-
-        registerPopupHook("ObjectSelectPopup", "alphalaneous.creative_mode", [](FLAlertLayer* self) {
-            auto tabsMenu = self->m_mainLayer->getChildByID("tabs-menu");
-            if (!tabsMenu) return;
-
-            for (auto child : CCArrayExt<CCNode*>(tabsMenu->getChildren())) {
-                setSFX(child, EditorSFX::SwitchTab);
-            }
-        });
 
         return true;
     }

@@ -1,39 +1,5 @@
 #include "mod_hooker.hpp"
-#include <Geode/modify/CCLayerColor.hpp>
 #include <Geode/modify/CCMenuItem.hpp>
-
-std::unordered_map<std::string, std::function<void(FLAlertLayer*)>> popupHooks;
-
-void registerPopupHook(const std::string& popupName, const std::string& modID, const std::function<void(FLAlertLayer*)>& hookFunction) {
-    if (!Loader::get()->isModLoaded(modID)) return;
-
-    log::debug("Registering popup hook for mod: {} on popup: {}", modID, popupName);
-    popupHooks[popupName] = hookFunction;
-}
-
-class $modify(CCLayerColor) {
-    bool initWithColor(const ccColor4B& color, float width, float height) {
-        if (!CCLayerColor::initWithColor(color, width, height)) return false;
-        if (!EditorUI::get()) return true;
-        if (popupHooks.empty()) return true;
-
-        this->retain();
-
-        Loader::get()->queueInMainThread([this]() {
-            for (const auto& [popupName, hookFunction] : popupHooks) {
-                if (popupName != getObjectName(this)) continue;
-
-                if (auto popup = typeinfo_cast<FLAlertLayer*>(this)) {
-                    hookFunction(popup);
-                }
-            }
-
-            this->release();
-        });
-
-        return true;
-    }
-};
 
 CCSFXCallback* CCSFXCallback::create(const std::function<void(CCObject*)>& callback) {
     auto obj = new CCSFXCallback();
