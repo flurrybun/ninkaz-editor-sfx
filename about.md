@@ -1,24 +1,20 @@
-Alleviate the deafening silence of the editor with 20+ tactile sound effects.
+Alleviate the deafening silence of the editor with 20+ tactile sound effects for every action.
 
 ---
 
-### <c-8BC81A>Why Sound Effects?</c>
-
-Sound effects aren't just ear candy, they also provide important feedback.
-
-### <c-B6C81A>Mod Compatibility</c>
+### <c-8BC81A>Mod Compatibility</c>
 
 Additional sound effects have been added for the following mods:
 
-- <c-FBFFB2>**[Tinker](mod:alphalaneous.tinker)**</c> by Alphalaneous
-- <c-FFFDB2>**[BetterEdit](mod:hjfod.betteredit)**</c> by HJFod
-- <c-FFF8B2>**[Allium Drawing Tool](mod:alk.allium)**</c> by Alk
+- <c-E8FFB2>**[Tinker](mod:alphalaneous.tinker)**</c> by Alphalaneous
+- <c-EDFFB2>**[BetterEdit](mod:hjfod.betteredit)**</c> by HJFod
+- <c-F2FFB2>**[Allium Drawing Tool](mod:alk.allium)**</c> by Alk
 
 If a mod isn't supported or doesn't have an appropriate sound for an action, consider [making an issue on GitHub](https://github.com/flurrybun/ninkaz-editor-sfx/issues).
 
-### <c-C8AE1A>Customization</c>
+### <c-B6C81A>Customization</c>
 
-<c-FFEEB2>**Sound packs**</c> are a simple way to customize sound effects. To import or create your own sound pack, click the <c-FFE9B2>**plus button**</c> in the settings menu under the <c-FFE5B2>**sound pack**</c> option.
+<c-FBFFB2>**Sound packs**</c> are a simple way to customize sound effects. To import or create your own sound pack, click the <c-FFFDB2>**plus button**</c> in the settings menu under the <c-FFF8B2>**sound pack**</c> option.
 
 Only `.wav`, `.mp3`, `.ogg`, and `.flac` files are allowed and must be named according to the following scheme:
 
