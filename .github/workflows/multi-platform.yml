@@ -40,9 +40,9 @@ jobs:
         uses: geode-sdk/build-geode-mod@main
         with:
           combine: true
+          export-pdb: true
+          export-symbols: true
           target: ${{ matrix.config.target }}
-          bindings: flurrybun/geode-bindings
-          bindings-ref: main
 
   package:
     name: Package builds
