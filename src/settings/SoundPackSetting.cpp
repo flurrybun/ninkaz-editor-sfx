@@ -213,7 +213,7 @@ std::string SoundPackSettingNode::getNameForSoundPackPath(std::filesystem::path 
         return "Default";
     }
 
-    return path.filename().string();
+    return string::pathToString(path.filename());
 }
 
 SoundPackSettingNode* SoundPackSettingNode::create(std::shared_ptr<SoundPackSetting> setting, float width) {

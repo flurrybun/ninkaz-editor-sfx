@@ -190,12 +190,12 @@ void CreateSoundPackPopup::validateSoundPackDir(std::filesystem::path const& pat
         }
 
         if (entry.is_directory()) {
-            subdirectories.push_back(entry.path().filename().string());
+            subdirectories.push_back(string::pathToString(entry.path().filename()));
         } else if (entry.is_regular_file()) {
-            auto ext = entry.path().extension().string();
+            std::string ext = string::pathToString(entry.path().extension());
 
             if (ext != ".wav" && ext != ".mp3" && ext != ".ogg" && ext != ".flac") {
-                invalidFiles.push_back(entry.path().filename().string());
+                invalidFiles.push_back(string::pathToString(entry.path().filename()));
             }
         }
     }

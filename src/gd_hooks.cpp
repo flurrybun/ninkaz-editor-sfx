@@ -818,7 +818,7 @@ class $modify(SFXEditLevelLayer, EditLevelLayer) {
         }
 
         sfx::altTabFix();
-        FMODAudioEngine::get()->playEffect(path.string(), 1, 0, 0.7f);
+        FMODAudioEngine::get()->playEffect(string::pathToString(path), 1, 0, 0.7f);
 
         EditLevelLayer::onEdit(sender);
     }

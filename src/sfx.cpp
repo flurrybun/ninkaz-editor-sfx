@@ -80,7 +80,7 @@ static void sfx::playSound(EditorSFX sound) {
 
     altTabFix();
 
-    FMODAudioEngine::get()->playEffect(path.string(), speed, 0, volume);
+    FMODAudioEngine::get()->playEffect(string::pathToString(path), speed, 0, volume);
 }
 
 float sfx::getSpeed(EditorSFX sound) {
