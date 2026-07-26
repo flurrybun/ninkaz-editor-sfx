@@ -8,7 +8,7 @@
     },
     "id": "ninkaz.editor_sfx",
     "name": "NinKaz's Editor SFX",
-    "version": "v1.0.1",
+    "version": "v1.0.2",
     "developer": "NinKaz",
     "description": "Alleviate the editor's deafening silence",
     "tags": ["editor", "enhancement", "offline"],

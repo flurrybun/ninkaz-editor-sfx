@@ -1,3 +1,8 @@
+### 1.0.2 (7/26/2026)
+
+- Added missing [Node IDs](mod:geode.node-ids) dependency
+- Fixed JIT iOS crash on editor save and play
+
 ### 1.0.1 (7/25/2026)
 
 - Fixed file paths not supporting UTF-16
