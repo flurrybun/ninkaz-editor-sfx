@@ -7,7 +7,6 @@
 #include <Geode/modify/GJTransformControl.hpp>
 #include <Geode/modify/HSVLiveOverlay.hpp>
 #include <Geode/modify/CCLayerColor.hpp>
-#include <Geode/modify/FMODAudioEngine.hpp>
 #include <Geode/modify/EditorPauseLayer.hpp>
 #include <Geode/modify/EditLevelLayer.hpp>
 #include <Geode/modify/EndLevelLayer.hpp>
@@ -709,21 +708,6 @@ class $modify(SFXCCLayerColor, CCLayerColor) {
     }
 };
 
-class $modify(SFXFMODAudioEngine, FMODAudioEngine) {
-    struct Fields {
-        bool shouldUnloadAllEffects = true;
-    };
-
-    SET_ALL_HOOK_PRIORITY;
-
-    $override
-    void unloadAllEffects() {
-        if (m_fields->shouldUnloadAllEffects) {
-            FMODAudioEngine::unloadAllEffects();
-        }
-    }
-};
-
 class $modify(SFXEditorPauseLayer, EditorPauseLayer) {
     SET_ALL_HOOK_PRIORITY;
 
@@ -755,27 +739,13 @@ class $modify(SFXEditorPauseLayer, EditorPauseLayer) {
         FMODAudioEngine::get()->playEffect("quitSound_01.ogg", 1, 0, 0.7);
     }
 
-    // playStep2 normally calls FMODAudioEngine::unloadAllEffects, which cuts off the sound effect on save and play
-    // i work around this by calling it in onSaveAndPlay instead
-
+    // playStep2 is called right after onSaveAndPlay
     $override
-    void onSaveAndPlay(CCObject* sender) {
-        sfx::altTabFix();
-        FMODAudioEngine::get()->unloadAllEffects();
+    void playStep2() {
+        EditorPauseLayer::playStep2();
 
         // @geode-ignore(unknown-resource)
         FMODAudioEngine::get()->playEffect("playSound_01.ogg", 1, 0, 0.3);
-
-        EditorPauseLayer::onSaveAndPlay(sender);
-    }
-
-    $override
-    void playStep2() {
-        auto sfxFMOD = static_cast<SFXFMODAudioEngine*>(FMODAudioEngine::get());
-
-        sfxFMOD->m_fields->shouldUnloadAllEffects = false;
-        EditorPauseLayer::playStep2();
-        sfxFMOD->m_fields->shouldUnloadAllEffects = true;
     }
 
     $override
