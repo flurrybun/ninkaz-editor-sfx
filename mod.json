@@ -15,6 +15,9 @@
     "resources": {
         "files": ["sfx/*.wav"]
     },
+    "dependencies": {
+        "geode.node-ids": "v1.22.0"
+    },
     "incompatibilities": {
         "alphalaneous.editorsounds": {
             "breaking": false,
