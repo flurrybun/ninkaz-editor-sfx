@@ -15,7 +15,11 @@ SFXCallback* SFXCallback::create(
 
 void SFXCallback::execute(CCObject* sender) {
     m_callback(sender);
-    (m_listener->*m_selector)(sender);
+
+    // m_selector will crash if null. this can happen if someone creates a custom button
+    // but instead of setting a selector, they override CCMenuItem::activate directly
+
+    if (m_selector) (m_listener->*m_selector)(sender);
 }
 
 void setCallback(CCNode* node, std::function<void(CCObject*)> callback) {
