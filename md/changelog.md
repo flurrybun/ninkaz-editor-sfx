@@ -1,3 +1,7 @@
+### 1.0.3 (7/31/2026)
+
+- Fixed crash with [Tinker](mod:alphalaneous.tinker)'s scale/rotation snap buttons
+
 ### 1.0.2 (7/26/2026)
 
 - Added missing [Node IDs](mod:geode.node-ids) dependency
