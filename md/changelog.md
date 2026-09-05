@@ -1,3 +1,7 @@
+### 1.0.4 (9/5/2026)
+
+- Fixed rare crash on editor enter
+
 ### 1.0.3 (7/31/2026)
 
 - Fixed crash with [Tinker](mod:alphalaneous.tinker)'s scale/rotation snap buttons
