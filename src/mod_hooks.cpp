@@ -20,6 +20,12 @@ class $modify(EditorUI) {
     bool init(LevelEditorLayer* lel) {
         if (!EditorUI::init(lel)) return false;
 
+        if (auto toolbar = getChildByID("toolbar-toggles-menu")) {
+            for (auto node : toolbar->getChildrenExt()) {
+                setToggleSFX(node, EditorSFX::ToggleButton);
+            }
+        }
+
         if (Loader::get()->isModLoaded("hjfod.betteredit")) {
             setSFX(
                 querySelector("undo-menu > hjfod.betteredit/hide-ui-toggle"),
