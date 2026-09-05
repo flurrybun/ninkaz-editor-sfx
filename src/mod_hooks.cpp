@@ -56,14 +56,17 @@ class $modify(EditorUI) {
                 querySelector("undo-menu > alphalaneous.tinker/hide-ui-toggle"),
                 EditorSFX::ToggleButton
             );
-            setSFX(
-                querySelector("alphalaneous.tinker/grid-size-controls")->getChildByType<CCMenuItemSpriteExtra>(0),
-                EditorSFX::ZoomIn
-            );
-            setSFX(
-                querySelector("alphalaneous.tinker/grid-size-controls")->getChildByType<CCMenuItemSpriteExtra>(1),
-                EditorSFX::ZoomOut
-            );
+
+            if (auto gridControl = querySelector("alphalaneous.tinker/grid-size-controls")) {
+                setSFX(
+                    gridControl->getChildByType<CCMenuItemSpriteExtra>(0),
+                    EditorSFX::ZoomIn
+                );
+                setSFX(
+                    gridControl->getChildByType<CCMenuItemSpriteExtra>(1),
+                    EditorSFX::ZoomOut
+                );
+            }
 
             for (auto node : CCArrayExt<CCNode>(m_editButtonBar->m_buttonArray)) {
                 if (node->getID() == "alphalaneous.tinker/center-objects") {
